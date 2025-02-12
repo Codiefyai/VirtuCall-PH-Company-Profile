@@ -1,7 +1,12 @@
 services:
   # A Docker web service
+  
   - type: web
-    name: fastapi-example
+    name: 2025ai-website # Choose a name for your service
+    runtime: static-html
+    routes:
+      - path: /
+        rewrite: /index.html
     runtime: python
     plan: free
     autoDeploy: false
