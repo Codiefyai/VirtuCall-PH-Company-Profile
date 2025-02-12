@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -425,7 +424,7 @@
         /* ----- New About Section Styles ----- */
         /* ---------------------------------- */
         #about-section {
-            display: block; /* Changed to block initially to be visible on page load */
+            display: none; /* Hidden initially */
             padding: 4rem 0;
             text-align: center;
         }
@@ -544,7 +543,7 @@
             <section class="call-to-action">
                 <div class="container">
                     <p>Ready to find the perfect AI tool for your needs?</p>
-                    <a href="#" class="button">Get Started</a>
+                    <a href="https://two050aitools-saw2.onrender.com/" class="button">Discover Your AI</a>
                 </div>
             </section>
         </main>
@@ -631,12 +630,13 @@
             // ----------------------------------
             // --- "Get Started" Button Logic ---
             // ----------------------------------
-            // **CHANGED:** Corrected the ID selector to 'get-started-button' to match the HTML
             const getStartedButton = document.getElementById('get-started-button');
-            getStartedButton.addEventListener('click', () => {
-                aboutSection.style.display = 'none';     // Hide about section
-                mainContent.style.display = 'block';    // Show main content
-            });
+            if (getStartedButton) { // Check if button exists to prevent errors if about section is removed
+                getStartedButton.addEventListener('click', () => {
+                    aboutSection.style.display = 'none';     // Hide about section
+                    mainContent.style.display = 'block';    // Show main content
+                });
+            }
 
 
         })();
