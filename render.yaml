@@ -1,12 +1,15 @@
 services:
   # A Docker web service
   
+ services:
   - type: web
-    name: 2025ai-website # Choose a name for your service
-    runtime: static-html
+    name: 2050ai-website  # Choose a name for your service
+    runtime: static
     routes:
       - path: /
         rewrite: /index.html
+
+    staticPublishPath: . #  Publish static files from the root directory
     runtime: python
     plan: free
     autoDeploy: false
