@@ -1,472 +1,644 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Codefusion Visualizer & Live Preview</title>
+    <meta charset="utf-8">
+    <title>2025ai</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link href="https://cdn.prod.website-files.com/67ac9fc4120a318b9a03c6f4/css/2025ai.webflow.2fd3081fb.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.prod.website-files.com/67ac9fc4120a318b9a03c6f4/67acc7b4257e870934ed4c4d_2050_AI-removebg%2032x32.ICO" rel="shortcut icon" type="image/x-icon">
+    <link href="https://cdn.prod.website-files.com/67ac9fc4120a318b9a03c6f4/67acc8207477dad16a96e035_2050_AI-removebg-256x256.png" rel="apple-touch-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        /* Base Styles */
+        /* General Styles (same as before) */
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Open Sans', sans-serif;
             margin: 0;
             padding: 0;
-            background: #121212;
-            color: #e5e5e5;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
-            position: relative;
-            user-select: none;
-            /* Disable text selection during drag */
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scrollbar during animation */
         }
 
-        /* Loading Screen */
-        .loading-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #121212;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            overflow: hidden;
-        }
-
-        /* Progress Bar */
-        .progress-bar-wrapper {
-            width: 80%;
-            background: #333;
-            border-radius: 25px;
-            overflow: hidden;
-            height: 20px;
-        }
-
-        .progress-bar {
-            height: 100%;
-            width: 0;
-            background: linear-gradient(90deg, #00ff90, #4e00ff);
-            transition: width 1s ease;
-            border-radius: 25px;
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            font-size: 40px;
-            color: #9b59b6;
-            margin-top: 20px;
-            letter-spacing: 2px;
-            animation: neon 1.5s ease-in-out infinite alternate;
-        }
-
-        /* Main Container */
         .container {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
             max-width: 1200px;
-            margin-top: 20px;
-            opacity: 0;
-            animation: fadeIn 1s forwards;
+            margin: 0 auto;
+            padding: 1rem;
         }
 
-        /* Editor and Preview Wrapper */
-        .editor-preview-wrapper {
+        .button {
+            display: inline-block;
+            background-color: #707AFF;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer; /* Add cursor pointer for buttons */
+        }
+
+        /* Top Bar Styles (same as before) */
+        .top-bar {
+            background-color: #f8f8f8;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .top-bar.menu-open {
+            background-color: #333;
+        }
+
+        .top-bar .container {
             display: flex;
             justify-content: space-between;
-            gap: 20px;
-            margin-top: 20px;
-            transition: all 0.3s ease;
+            align-items: center;
         }
 
-        /* Editor Section */
-        .editor {
-            width: 48%;
-            background: #2a2a2a;
-            border-radius: 10px;
-            padding: 20px;
-            position: relative;
-            transition: all 0.3s ease;
+        .top-bar-logo img {
+            width: 120px;
+            height: auto;
         }
 
-        .editor textarea {
-            width: 100%;
-            height: 80%;
-            background-color: #262626;
-            color: #fff;
-            border: 2px solid #444;
-            border-radius: 10px;
-            padding: 12px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 16px;
-            resize: none;
-        }
-
-        /* Copy Button */
-        .copy-btn {
-            background: linear-gradient(135deg, #ff9900, #ff4500);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 16px;
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease, background 0.3s ease;
-            margin-bottom: 10px;
-        }
-
-        .copy-btn:hover {
-            background: linear-gradient(135deg, #ff4500, #ff9900);
-            transform: scale(1.05);
-        }
-
-        .copy-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Preview Section */
-        .preview {
-            width: 48%;
-            background: #2a2a2a;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-            padding: 20px;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 10px;
-        }
-
-        /* Buttons */
-        .toggle-button {
-            background: linear-gradient(135deg, #4e00ff, #00ff90);
-            color: white;
-            padding: 15px 25px;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 18px;
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease, background 0.3s ease;
-        }
-
-        .toggle-button:hover {
-            background: linear-gradient(135deg, #00ff90, #4e00ff);
-            transform: scale(1.05);
-        }
-
-        .toggle-button:active {
-            transform: scale(0.95);
-        }
-
-        /* Fullscreen & Minimize Buttons */
-        .fullscreen-button,
-        .minimize-button,
-        .refresh-button {
-            background: #ff4500;
-            border-radius: 50%;
-            color: white;
-            font-size: 18px;
-            border: none;
-            cursor: pointer;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 30px;
-            height: 30px;
+        /* Navigation Menu Styles (same as before) */
+        .nav-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
             display: flex;
             align-items: center;
-            justify-content: center;
         }
 
-        .maximize-button {
-            background: #ff4500;
-            border-radius: 50%;
-            color: white;
-            font-size: 18px;
-            border: none;
+        .nav-menu li {
+            margin: 0 1rem;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: #707AFF;
+        }
+
+        .nav-menu details {
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-menu summary {
             cursor: pointer;
+            display: block;
+            padding: 0.75rem 0;
+            transition: color 0.3s ease;
+            color: #333;
+        }
+
+        .nav-menu summary:hover {
+            color: #707AFF;
+        }
+
+        .nav-menu details>ul {
+            display: none;
             position: absolute;
-            top: 10px;
-            right: 40px;
-            width: 30px;
-            height: 30px;
+            top: 100%;
+            left: 0;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .nav-menu details[open]>ul {
+            display: block;
+        }
+
+        .nav-menu ul ul li {
+            margin: 0;
+            padding: 0.25rem 0;
+        }
+
+        .nav-menu ul ul a {
+            display: block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+        }
+
+        /* Theme Toggle Styles (same as before) */
+        .theme-toggle {
             display: flex;
             align-items: center;
-            justify-content: center;
+            margin-left: 2rem;
         }
 
-        .fullscreen-button:hover,
-        .minimize-button:hover,
-        .maximize-button:hover,
-        .refresh-button:hover {
-            background: #e94e77;
+        .theme-toggle label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
         }
 
-        /* Animation Keyframes */
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-            }
-
-            100% {
-                opacity: 1;
-            }
+        .theme-toggle .toggleThemeIcon {
+            position: relative;
+            margin: auto;
+            cursor: pointer;
+            height: 1.6rem;
+            background-color: #E8E8E8;
+            transition: .4s;
+            border-radius: 8rem;
+            width: 3rem;
+            padding: .2rem;
         }
 
-        @keyframes neon {
-            0% {
-                text-shadow: 0 0 5px #2bdb72, 0 0 10px #2bdb72, 0 0 15px #2bdb72;
-            }
-
-            100% {
-                text-shadow: 0 0 5px #9b59b6, 0 0 10px #9b59b6, 0 0 15px #9b59b6;
-            }
-        }
-
-        /* Canvas Styling */
-        #canvas {
+        .theme-toggle .toggleThemeIcon:before {
             position: absolute;
+            content: '';
+            height: 1.2rem;
+            width: 1.2rem;
+            background-color: #FFFFFF;
+            text-align: center;
+            transition: .4s;
+            border-radius: 4rem;
+            box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='19' height='19' fill='none' viewBox='0 0 32 32'%3E%3Cpath fill='%23707AFF' d='M16 4a1.714 1.714 0 110 3.429A1.714 1.714 0 0116 4zM24.485 7.515a1.714 1.714 0 11-2.424 2.424 1.714 1.714 0 012.424-2.424zM7.429 16A1.714 1.714 0 104 16a1.714 1.714 0 003.429 0zM26.286 14.286a1.714 1.714 0 110 3.428 1.714 1.714 0 010-3.428zM9.94 24.485a1.714 1.714 0 10-2.425-2.424 1.714 1.714 0 002.424 2.424zM24.485 22.06a1.714 1.714 0 11-2.424 2.425 1.714 1.714 0 012.424-2.424zM16 24.571A1.714 1.714 0 1116 28a1.714 1.714 0 010-3.429zM9.94 7.515a1.714 1.714 0 4 1.714 0 10-2.425 2.424 1.714 1.714 0 002.424-2.424zM22 16a6 6 0 11-12 0 6 6 0 0112 0z'/%3E%3C/svg%3E%0A");
+        }
+
+        input:checked + .theme-toggle .toggleThemeIcon {
+            background-color: #4ab8ff;
+        }
+
+        input:checked + .theme-toggle .toggleThemeIcon:before {
+            content: '';
+            transform: translateX(calc(2.8rem - 1.2rem - 0.2rem));
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='19' height='19' fill='none' viewBox='0 0 32 32'%3E%3Cpath fill='%23707AFF' d='M25.955 16.163a8 8 0 01-10.91-10.91C9.97 5.732 6 10.005 6 15.206c0 5.523 4.477 10 10 10 5.2 0 9.474-3.97 9.955-9.044z'/%3E%3C/svg%3E%0A");
+        }
+
+        #toggleTheme {
+            display: none;
+        }
+
+        /* Hero Section Styles (same as before) */
+        .hero {
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Featured Tools Styles (same as before) */
+        .featured-tools {
+            padding: 2rem 0;
+        }
+
+        .featured-tools h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Call to Action Styles (same as before) */
+        .call-to-action {
+            background-color: #f0f0f0;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        /* Footer Styles (same as before) */
+        .footer {
+            background-color: #333;
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        /* Dark Mode Styles (same as before) */
+        body.dark-mode {
+            background-color: #171717;
+            color: #ffffff;
+        }
+
+        body.dark-mode a {
+            color: #ffffff;
+        }
+
+        body.dark-mode a.w--current {
+            color: #707AFF;
+        }
+
+        body.dark-mode path {
+            fill: #ffffff;
+        }
+
+        body.dark-mode .submit-main .div-block-11 .rich-text-block-10 {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        body.dark-mode .footer-subscribe {
+            fill: #ffffff;
+        }
+
+        body.dark-mode .tool-item-columns-new {
+            background-color: #2b2b2b;
+        }
+
+        body.dark-mode .dropdown-toggle-2 {
+            color: #ffffff;
+        }
+
+        body.dark-mode .footer-copyright {
+            color: #ffffff;
+        }
+
+        body.dark-mode .columns-6 {
+            background-color: #999999;
+        }
+
+        body.dark-mode .text-block-55 {
+            color: #ffffff;
+        }
+
+        body.dark-mode .thank-you-link {
+            color: #a0a0a0;
+        }
+
+        body.dark-mode .collection-item-6 {
+            background-color: #2b2b2b;
+        }
+
+        body.dark-mode .white-cover {
+            color: #ffffff;
+        }
+
+        body.dark-mode .white-text-dm {
+            color: #ffffff;
+            opacity: 0.8;
+        }
+
+        body.dark-mode .white-text-db-gc {
+            color: #ffffff;
+            opacity: 0.8;
+        }
+
+        body.dark-mode .black-text-db-gc {
+            color: #000000;
+        }
+
+        body.dark-mode .footer-social-link-three-path {
+            color: #ffffff;
+        }
+
+        body.dark-mode .blue-text-dm {
+            color: #0f89f3;
+        }
+
+        /* Mobile Menu Styles (same as before) */
+        .menu-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+            display: none;
+        }
+
+        .menu-button:focus {
+            outline: none;
+        }
+
+        .nav-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            text-align: center;
+            z-index: 5;
+        }
+
+        .nav-menu.show {
+            display: block;
+        }
+
+        .menu-button i {
+            font-size: 24px;
+        }
+
+        /* Media Queries (same as before) */
+        @media (max-width: 768px) {
+            .top-bar .container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-menu {
+                position: static;
+                display: none;
+                width: 100%;
+                padding: 0;
+                box-shadow: none;
+                text-align: left;
+            }
+
+            .nav-menu ul {
+                flex-direction: column;
+            }
+
+            .nav-menu li {
+                margin: 0.5rem 0;
+            }
+
+            .menu-button {
+                display: block;
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+            }
+        }
+
+        /* ---------------------------------- */
+        /* --- New Loading Screen Styles --- */
+        /* ---------------------------------- */
+        #loading-screen {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
+            background-color: #f8f8f8; /* Match top-bar background */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it's on top */
         }
+
+        #loading-bar-container {
+            width: 200px; /* Adjust as needed */
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative; /* For robot positioning */
+        }
+
+        #loading-bar {
+            width: 0%;
+            height: 100%;
+            background-color: #707AFF;
+            border-radius: 10px;
+            transition: width 0.1s ease; /* Smooth loading bar animation */
+        }
+
+        #robot-container {
+            position: absolute;
+            left: 0; /* Start at the beginning */
+            top: -35px; /* Position above the loading bar */
+            width: 40px; /* Adjust robot container width */
+            height: 40px; /* Adjust robot container height */
+            overflow: hidden; /* Clip robot if needed */
+        }
+
+        #robot-image {
+            width: 40px; /* Robot image width */
+            height: auto; /* Keep aspect ratio */
+            display: block;
+            animation: march 1s steps(2) infinite; /* Robot marching animation (adjust steps based on your robot sprite) */
+            transform: translateX(0%); /* Initial robot position */
+            transition: transform 0.1s linear; /* Sync robot movement with loading bar */
+        }
+
+        @keyframes march {
+            from { transform: translateX(0); }
+            to { transform: translateX(-100%); } /* Adjust if your sprite sheet is different */
+        }
+
+
+        /* ---------------------------------- */
+        /* ----- New About Section Styles ----- */
+        /* ---------------------------------- */
+        #about-section {
+            display: none; /* Hidden initially */
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        #about-section .container {
+            max-width: 800px; /* Narrower container for text */
+        }
+
+        #about-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        #about-section p {
+            margin-bottom: 1.5rem;
+            color: #555;
+        }
+
+        /* ---------------------------------- */
+        /* ----- Main Content Section Styles ----- */
+        /* ---------------------------------- */
+        #main-content {
+            display: none; /* Hidden initially, shown after "Get Started" */
+        }
+
+
     </style>
 </head>
-
 <body>
 
     <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen">
-        <div class="progress-bar-wrapper">
-            <div class="progress-bar" id="progressBar"></div>
+    <div id="loading-screen">
+        <h1>Loading AI Tools...</h1>
+        <div id="loading-bar-container">
+            <div id="loading-bar"></div>
+            <div id="robot-container">
+                <img id="robot-image" src="https://i.imgur.com/7pvpcpV.png" alt="Marching Robot">
+                <!-- Replace with your robot image -->
+            </div>
         </div>
     </div>
 
-    <!-- Header -->
-    <div class="header">Codefusion Visualizer & Live Preview</div>
+    <!-- About Section -->
+    <section id="about-section">
+        <div class="container">
+            <h2>Welcome to 2025AI</h2>
+            <p>Discover and explore the best AI tools available to enhance your productivity and creativity. Our curated list helps you navigate the world of artificial intelligence and find the perfect tools for your needs.</p>
 
-    <!-- Main Container -->
-    <div class="container" id="mainContainer">
-        <!-- Editor and Preview Wrapper -->
-        <div class="editor-preview-wrapper">
-            <!-- Editor Section -->
-            <div class="editor" id="editorSection">
-                <h3>Paste or Edit Your HTML Code</h3>
-                <button class="copy-btn" id="copyCodeBtn" onclick="copyCode()">Copy Code</button>
-                <textarea id="htmlInput" placeholder="Paste your HTML code here..."></textarea>
-                <button class="fullscreen-button" id="fullscreenEditorBtn" onclick="fullscreenEditor()">◻</button>
-                <button class="minimize-button" id="minimizeEditorBtn" onclick="minimizeEditor('editor')">―</button>
-                <button class="maximize-button" style="display: none" id="maximizeEditorBtn" onclick="maximizeEditor('editor')">⊠</button>
-                <button class="refresh-button" id="refreshEditorBtn" onclick="refreshLayout('editor')" style="right: 75px;">↻</button>
-            </div>
+            <h3>User Guide</h3>
+            <p><strong>How to use 2025AI:</strong></p>
+            <ol style="list-style-type: decimal; text-align: left; margin: 0 auto; max-width: 600px;">
+                <li><strong>Explore Tools:</strong> Browse our categories or use the search function to find AI tools.</li>
+                <li><strong>Read Descriptions:</strong> Each tool comes with a brief description to help you understand its purpose.</li>
+                <li><strong>Visit Website:</strong> Click on a tool to visit its official website and learn more or start using it.</li>
+                <li><strong>Stay Updated:</strong> Check the "Added Today" section for the latest AI tools.</li>
+            </ol>
 
-            <!-- Live Preview Section -->
-            <div class="preview" id="previewSection">
-                <h3>Live Preview</h3>
-                <iframe id="htmlPreview"></iframe>
-                <button class="fullscreen-button" id="fullscreenPreviewBtn" onclick="fullscreenPreview()">◻</button>
-                <button class="minimize-button" id="minimizePreviewBtn" onclick="minimizeEditor('preview')">―</button>
-                <button class="maximize-button" style="display: none" id="maximizePreviewBtn" onclick="maximizeEditor('preview')">⊠</button>
-                <button class="refresh-button" id="refreshPreviewBtn" onclick="refreshLayout('preview')" style="right: 75px;">↻</button>
-            </div>
+            <button id="get-started-button" class="button">Get Started</button>
         </div>
+    </section>
 
-        <!-- Toggle Button -->
-        <button id="toggleBtn" class="toggle-button" onclick="togglePlaceholder()">Toggle Placeholder</button>
+    <!-- Main Content (Initially Hidden) -->
+    <div id="main-content">
+        <header id="top-bar" class="top-bar">
+            <div class="container">
+                <div id="logo" class="top-bar-logo">
+                    <a href="/">
+                        <img src="https://i.ibb.co/2195hnn4/2050-AI-removebg-preview.png" alt="2050 AI" title="2050 AI">
+                    </a>
+                </div>
+                <button aria-label="Toggle Menu" class="menu-button">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <nav class="nav-menu">
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/newly-added">Added Today</a></li>
+                        <li><a href="/news">AI News</a></li>
+                        <li><a href="/learn">Videos</a></li>
+                        <li>
+                            <details>
+                                <summary>Help</summary>
+                                <ul>
+                                    <li><a href="/glossary">Glossary</a></li>
+                                    <li><a href="/faq">FAQ</a></li>
+                                    <li><a href="/submit-a-tool">Submit a Tool</a></li>
+                                </ul>
+                            </details>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="theme-toggle">
+                    <label for="toggleTheme">
+                        <input type="checkbox" id="toggleTheme">
+                        <span class="togglethemeicon"></span>
+                    </label>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero">
+                <div class="container">
+                    <h1>Explore the Future with AI Tools</h1>
+                    <p>Discover the best AI tools to boost your productivity and unlock new possibilities.</p>
+                </div>
+            </section>
+
+            <section class="featured-tools">
+                <div class="container">
+                    <h2>Featured AI Tools</h2>
+                    <!-- Add your featured tools content here -->
+                </div>
+            </section>
+
+            <section class="call-to-action">
+                <div class="container">
+                    <p>Ready to find the perfect AI tool for your needs?</p>
+                    <a href="#" class="button">Get Started</a>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+                <p>© 2024 2050AI. All rights reserved.</p>
+            </div>
+        </footer>
     </div>
 
-    <!-- Canvas -->
-    <canvas id="canvas"></canvas>
 
     <script>
-        let progress = 0;
-        const progressBar = document.getElementById('progressBar');
-        const loadingScreen = document.getElementById('loadingScreen');
-        const mainContainer = document.getElementById('mainContainer');
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        let savedCode = ""; //Store code
+        (function() {
+            // Theme Toggle (same as before)
+            function setThemeFromCookie() {
+                if (document.cookie.match(/theme=dark/i)) {
+                    document.body.classList.add('dark-mode');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                }
+            }
 
-        // Canvas particle animation
-        let particles = [];
+            function setThemeSwitchState() {
+                document.getElementById('toggleTheme').checked = document.cookie.match(/theme=dark/i) != null;
+            }
 
-        function createParticle(x, y) {
-            const particle = {
-                x: x,
-                y: y,
-                size: Math.random() * 5 + 2,
-                speedX: Math.random() * 2 - 1,
-                speedY: Math.random() * 2 - 1,
-                color: '#00ff90'
-            };
-            particles.push(particle);
-        }
+            function toggleTheme() {
+                if (document.body.classList.contains('dark-mode')) {
+                    document.body.classList.remove('dark-mode');
+                    document.cookie = 'theme=light';
+                } else {
+                    document.body.classList.add('dark-mode');
+                    document.cookie = 'theme=dark';
+                }
+            }
 
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Initialize Theme
+            setThemeFromCookie();
+            setThemeSwitchState();
+            document.getElementById('toggleTheme').addEventListener('change', toggleTheme);
 
-            particles.forEach((particle, index) => {
-                particle.x += particle.speedX;
-                particle.y += particle.speedY;
-                ctx.beginPath();
-                ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-                ctx.fillStyle = particle.color;
-                ctx.fill();
+            // Centralized Menu Toggle (same as before)
+            const menuButton = document.querySelector('.menu-button');
+            const navMenu = document.querySelector('.nav-menu');
+            const topBar = document.getElementById('top-bar');
 
-                // Remove particles that move off-screen
-                if (particle.x < 0 || particle.x > canvas.width || particle.y < 0 || particle.y > canvas.height) {
-                    particles.splice(index, 1);
+            if (menuButton && navMenu) {
+                menuButton.addEventListener('click', () => {
+                    navMenu.classList.toggle('show');
+                    topBar.classList.toggle('menu-open');
+                });
+            }
+
+            document.addEventListener('click', (event) => {
+                if (menuButton && navMenu && !menuButton.contains(event.target) && !navMenu.contains(event.target) && navMenu.classList.contains('show')) {
+                    navMenu.classList.remove('show');
+                    topBar.classList.remove('menu-open');
                 }
             });
 
-            requestAnimationFrame(animateParticles);
-        }
+            // ----------------------------------
+            // --- Loading Screen Logic ---
+            // ----------------------------------
+            const loadingScreen = document.getElementById('loading-screen');
+            const aboutSection = document.getElementById('about-section');
+            const mainContent = document.getElementById('main-content');
+            const loadingBar = document.getElementById('loading-bar');
+            const robotContainer = document.getElementById('robot-container');
 
-        // Handle mouse move for canvas particles
-        document.addEventListener('mousemove', (e) => {
-            createParticle(e.x, e.y);
-        });
+            let progress = 0;
+            const loadingInterval = setInterval(() => {
+                progress += 1; // Adjust increment for loading speed
+                loadingBar.style.width = progress + '%';
+                robotContainer.style.transform = `translateX(calc(${progress}% - 40px))`; // Move robot along the bar
 
-        // Handle window resizing for canvas
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        // Simulate loading
-        function simulateLoading() {
-            setInterval(() => {
-                if (progress < 100) {
-                    progress++;
-                    progressBar.style.width = progress + '%';
-                } else {
-                    loadingScreen.style.display = 'none';
-                    mainContainer.style.opacity = 1;
+                if (progress >= 100) {
+                    clearInterval(loadingInterval);
+                    loadingScreen.style.display = 'none'; // Hide loading screen
+                    aboutSection.style.display = 'block';  // Show about section
                 }
-            }, 10);
-        }
+            }, 50); // Adjust interval for loading speed
 
-        simulateLoading();
+            // ----------------------------------
+            // --- "Get Started" Button Logic ---
+            // ----------------------------------
+            const getStartedButton = document.getElementById('find-ai-tools-button');
+            getStartedButton.addEventListener('click', () => {
+                aboutSection.style.display = 'none';     // Hide about section
+                mainContent.style.display = 'block';    // Show main content
+            });
 
-        // Initialize Canvas Size
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
 
-        // Handle HTML Input and Live Preview
-        const htmlInput = document.getElementById('htmlInput');
-        const htmlPreview = document.getElementById('htmlPreview');
-
-        htmlInput.addEventListener('input', function () {
-            htmlPreview.srcdoc = htmlInput.value;
-            savedCode = htmlInput.value; // Save the code
-        });
-           // Restore saved code when page loads
-           window.onload = function() {
-                if (savedCode) {
-                    htmlInput.value = savedCode;
-                     htmlPreview.srcdoc = savedCode;
-               }
-           }
-        // Toggle Placeholder Visibility
-        function togglePlaceholder() {
-            const editorSection = document.getElementById('editorSection');
-            const previewSection = document.getElementById('previewSection');
-            const toggleBtn = document.getElementById('toggleBtn');
-
-            if (editorSection.style.display === 'none') {
-                editorSection.style.display = 'block';
-                previewSection.style.width = '48%';
-                toggleBtn.innerText = 'Hide Placeholder';
-            } else {
-                editorSection.style.display = 'none';
-                previewSection.style.width = '100%';
-                toggleBtn.innerText = 'Show Placeholder';
-            }
-        }
-
-        // Copy Code to Clipboard
-        function copyCode() {
-            const textarea = document.getElementById('htmlInput');
-            textarea.select();
-            document.execCommand('copy');
-            alert('Code Copied to Clipboard!');
-        }
-
-        // Minimize and Maximize Editor/Preview
-        function minimizeEditor(section) {
-            const sectionElement = document.getElementById(section + 'Section');
-            const minimizeButton = document.getElementById('minimize' + section.charAt(0).toUpperCase() + section.slice(1) + 'Btn');
-            const maximizeButton = document.getElementById('maximize' + section.charAt(0).toUpperCase() + section.slice(1) + 'Btn');
-
-            sectionElement.style.height = '40px';
-            minimizeButton.style.display = 'none';
-            maximizeButton.style.display = 'flex';
-        }
-
-        function maximizeEditor(section) {
-            const sectionElement = document.getElementById(section + 'Section');
-            const minimizeButton = document.getElementById('minimize' + section.charAt(0).toUpperCase() + section.slice(1) + 'Btn');
-            const maximizeButton = document.getElementById('maximize' + section.charAt(0).toUpperCase() + section.slice(1) + 'Btn');
-
-            sectionElement.style.height = 'auto';
-            minimizeButton.style.display = 'flex';
-            maximizeButton.style.display = 'none';
-        }
-
-        // Fullscreen for Editor
-        function fullscreenEditor() {
-            const editorSection = document.getElementById('editorSection');
-            editorSection.style.width = '100%';
-            editorSection.style.height = '100vh';
-            editorSection.style.position = 'absolute';
-            editorSection.style.top = '0';
-            editorSection.style.left = '0';
-        }
-
-        // Fullscreen for Preview
-        function fullscreenPreview() {
-            const previewSection = document.getElementById('previewSection');
-            previewSection.style.width = '100%';
-            previewSection.style.height = '100vh';
-            previewSection.style.position = 'absolute';
-            previewSection.style.top = '0';
-            previewSection.style.left = '0';
-        }
-
-        // Refresh Layout
-        function refreshLayout(section) {
-            const sectionElement = document.getElementById(section + 'Section');
-            const minimizeButton = document.getElementById('minimize' + section.charAt(0).toUpperCase() + section.slice(1) + 'Btn');
-            const maximizeButton = document.getElementById('maximize' + section.charAt(0).toUpperCase() + section.slice(1) + 'Btn');
-
-            sectionElement.style.width = '48%';
-            sectionElement.style.height = 'auto';
-            minimizeButton.style.display = 'flex';
-            maximizeButton.style.display = 'none';
-            sectionElement.style.position = 'relative';
-            sectionElement.style.top = 'auto';
-            sectionElement.style.left = 'auto';
-        }
-
-       animateParticles();
+        })();
     </script>
-
 </body>
-
 </html>
