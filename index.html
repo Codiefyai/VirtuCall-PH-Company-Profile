@@ -16,6 +16,8 @@
             --dark: #1c1256;      /* Using Primary for Dark Text */
             --light: #FFFFFF;     /* White */
             --text-light-secondary: #5a5a7a; /* A slightly lighter version of dark for less emphasis */
+            --highlight-red: rgba(255, 0, 0, 0.3); /* Highlight color */
+            --highlight-red-text: #cc0000; /* Optional darker text for highlights */
         }
 
         *, *::before, *::after {
@@ -36,6 +38,14 @@
             color: var(--dark); /* Default text color */
             overflow-x: hidden; /* Prevent horizontal scroll */
         }
+        /* Cursor change when highlight mode is active */
+        body.highlight-mode-active {
+            cursor: crosshair;
+        }
+        body.highlight-mode-active .slide-content * {
+             cursor: crosshair;
+        }
+
 
         .presentation-container {
             width: 100vw;
@@ -49,7 +59,7 @@
             width: 100%;
             height: 100%;
             background-color: var(--light); /* White slide background */
-            padding: clamp(20px, 5vw, 40px); /* Responsive padding */
+            padding: clamp(20px, 4vh, 40px) clamp(20px, 5vw, 40px); /* Responsive padding */
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -58,22 +68,19 @@
             transform: translateX(100%);
             opacity: 0;
             z-index: 1;
-            overflow-y: auto;
+            overflow-y: auto; /* Allow scrolling for content overflow */
+            scrollbar-width: thin; /* For Firefox */
+            scrollbar-color: var(--secondary) var(--accent); /* For Firefox */
         }
+        /* Webkit scrollbar styling */
+        .slide::-webkit-scrollbar { width: 8px; }
+        .slide::-webkit-scrollbar-track { background: var(--accent); border-radius: 4px; }
+        .slide::-webkit-scrollbar-thumb { background-color: var(--secondary); border-radius: 4px; border: 2px solid var(--accent); }
 
-        .slide.active {
-            transform: translateX(0);
-            opacity: 1;
-            z-index: 2;
-        }
-        .slide.prev {
-            transform: translateX(-100%);
-            opacity: 0;
-        }
-        .slide.next {
-            transform: translateX(100%);
-            opacity: 0;
-        }
+
+        .slide.active { transform: translateX(0); opacity: 1; z-index: 2; }
+        .slide.prev { transform: translateX(-100%); opacity: 0; }
+        .slide.next { transform: translateX(100%); opacity: 0; }
 
 
         .slide-header {
@@ -81,14 +88,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px; /* Reduced margin */
             flex-shrink: 0;
+            padding: 0 clamp(10px, 2vw, 20px); /* Add horizontal padding */
         }
 
-        .logo {
-            height: clamp(40px, 7vh, 60px); /* Adjusted logo size */
-            width: auto;
-        }
+        .logo { height: clamp(40px, 7vh, 60px); width: auto; }
 
         .slide-number {
             color: var(--secondary); /* Use secondary blue for contrast */
@@ -97,6 +102,7 @@
             background-color: var(--accent); /* Light background */
             padding: 5px 10px;
             border-radius: 15px;
+            flex-shrink: 0; /* Prevent shrinking */
         }
 
         .slide-content {
@@ -109,258 +115,58 @@
             text-align: center;
             max-width: 1100px;
             margin: 0 auto;
-            padding-bottom: 80px;
+            padding: 10px clamp(10px, 2vw, 20px) 80px; /* Ensure bottom padding for nav */
+            overflow: visible; /* Let content determine height */
+            min-height: 0; /* Allow shrinking if needed */
         }
 
-        h1 {
-            color: var(--primary); /* Main dark color */
-            font-size: clamp(1.8rem, 5vw, 2.8rem);
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
 
-        h2 {
-            color: var(--secondary); /* Bright blue for secondary headers */
-            font-size: clamp(1.5rem, 4vw, 2.2rem);
-            margin-bottom: 1.2rem;
-            font-weight: 600;
-        }
+        h1 { color: var(--primary); font-size: clamp(1.8rem, 5vw, 2.8rem); margin-bottom: 1rem; font-weight: 700; }
+        h2 { color: var(--secondary); font-size: clamp(1.5rem, 4vw, 2.2rem); margin-bottom: 1.2rem; font-weight: 600; }
+        p { color: var(--dark); font-size: clamp(0.9rem, 2.5vw, 1.1rem); line-height: 1.7; margin-bottom: 1.2rem; max-width: 800px; }
+        p.subtle { color: var(--text-light-secondary); }
 
-        p {
-            color: var(--dark);
-            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
-            line-height: 1.7;
-            margin-bottom: 1.2rem;
-            max-width: 800px;
-        }
-        p.subtle {
-            color: var(--text-light-secondary); /* Softer color for less important text */
-        }
+        ul { text-align: left; max-width: 700px; margin: 0 auto 1.5rem; padding-left: 20px; list-style: none; }
+        li { color: var(--dark); font-size: clamp(0.9rem, 2.5vw, 1rem); line-height: 1.7; margin-bottom: 0.8rem; position: relative; padding-left: 25px; }
+        li::before { content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--success); position: absolute; left: 0; top: 4px; }
 
-        ul {
-            text-align: left;
-            max-width: 700px;
-            margin: 0 auto 1.5rem;
-            padding-left: 20px;
-            list-style: none;
-        }
+        .highlight-box { background-color: var(--accent); border-left: 5px solid var(--secondary); padding: clamp(15px, 3vw, 25px); margin: 1.5rem 0; text-align: left; max-width: 800px; border-radius: 5px; width: 100%; }
+        .highlight-box h3 { color: var(--primary); margin-bottom: 0.8rem; font-size: clamp(1.1rem, 3vw, 1.3rem); }
 
-        li {
-            color: var(--dark);
-            font-size: clamp(0.9rem, 2.5vw, 1rem);
-            line-height: 1.7;
-            margin-bottom: 0.8rem;
-            position: relative;
-            padding-left: 25px;
-        }
+        .btn { background-color: var(--secondary); color: var(--light); padding: 12px 30px; border: none; border-radius: 5px; font-size: clamp(0.9rem, 2.5vw, 1rem); cursor: pointer; transition: all 0.3s ease; margin-top: 1.5rem; text-decoration: none; display: inline-block; font-weight: 600; }
+        .btn:hover, .btn:focus { background-color: var(--primary); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(28, 18, 86, 0.2); outline: none; }
 
-        li::before {
-            content: "\f00c";
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-            color: var(--success); /* Light cyan blue for checkmarks */
-            position: absolute;
-            left: 0;
-            top: 4px;
-        }
+        .nav-buttons { position: fixed; bottom: clamp(15px, 3vh, 25px); right: clamp(15px, 3vw, 25px); display: flex; gap: 10px; z-index: 100; }
+        .nav-btn { width: clamp(40px, 8vw, 50px); height: clamp(40px, 8vw, 50px); border-radius: 50%; background-color: var(--primary); color: var(--light); display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: clamp(1rem, 3vw, 1.2rem); transition: all 0.3s ease; border: none; box-shadow: 0 3px 10px rgba(28, 18, 86, 0.25); }
+        .nav-btn:hover, .nav-btn:focus { background-color: var(--secondary); transform: scale(1.1); outline: none; }
+        .nav-btn:disabled { background-color: #cccccc; cursor: not-allowed; transform: none; box-shadow: none; color: #888888; }
 
-        .highlight-box {
-            background-color: var(--accent); /* Light accent background */
-            border-left: 5px solid var(--secondary); /* Bright blue border */
-            padding: clamp(15px, 3vw, 25px);
-            margin: 1.5rem 0;
-            text-align: left;
-            max-width: 800px;
-            border-radius: 5px;
-            width: 100%;
-        }
+        .image-container { max-width: 90%; width: 500px; margin: 1.5rem auto; border-radius: 10px; overflow: hidden; box-shadow: 0 8px 25px rgba(28, 18, 86, 0.1); transition: all 0.3s ease; }
+        .image-container:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(28, 18, 86, 0.15); }
+        .image-container img { width: 100%; height: auto; display: block; object-fit: cover; }
 
-        .highlight-box h3 {
-            color: var(--primary); /* Dark primary color for heading */
-            margin-bottom: 0.8rem;
-            font-size: clamp(1.1rem, 3vw, 1.3rem);
-        }
+        .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: clamp(15px, 3vw, 25px); width: 100%; max-width: 1000px; margin: 1.5rem 0; }
+        .card { background: var(--light); border-radius: 10px; padding: clamp(20px, 4vw, 30px); box-shadow: 0 5px 15px rgba(28, 18, 86, 0.05); border-top: 5px solid var(--primary); transition: all 0.3s ease; text-align: left; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(28, 18, 86, 0.1); border-top-color: var(--secondary); }
+        .card h3 { color: var(--primary); margin-bottom: 1rem; font-size: clamp(1.1rem, 3vw, 1.3rem); }
 
-        .btn {
-            background-color: var(--secondary); /* Bright blue button */
-            color: var(--light); /* White text */
-            padding: 12px 30px;
-            border: none;
-            border-radius: 5px;
-            font-size: clamp(0.9rem, 2.5vw, 1rem);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 1.5rem;
-            text-decoration: none;
-            display: inline-block;
-            font-weight: 600;
-        }
-
-        .btn:hover, .btn:focus {
-            background-color: var(--primary); /* Dark primary on hover */
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(28, 18, 86, 0.2); /* Shadow matching primary */
-            outline: none;
-        }
-
-        .nav-buttons {
-            position: fixed;
-            bottom: clamp(15px, 3vh, 25px);
-            right: clamp(15px, 3vw, 25px);
-            display: flex;
-            gap: 10px;
-            z-index: 100;
-        }
-
-        .nav-btn {
-            width: clamp(40px, 8vw, 50px);
-            height: clamp(40px, 8vw, 50px);
-            border-radius: 50%;
-            background-color: var(--primary); /* Dark primary background */
-            color: var(--light); /* White icon */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            font-size: clamp(1rem, 3vw, 1.2rem);
-            transition: all 0.3s ease;
-            border: none;
-            box-shadow: 0 3px 10px rgba(28, 18, 86, 0.25);
-        }
-
-        .nav-btn:hover, .nav-btn:focus {
-            background-color: var(--secondary); /* Bright blue on hover */
-            transform: scale(1.1);
-            outline: none;
-        }
-        .nav-btn:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-            color: #888888;
-        }
-
-        .image-container {
-            max-width: 90%;
-            width: 500px;
-            margin: 1.5rem auto;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(28, 18, 86, 0.1); /* Subtle shadow */
-            transition: all 0.3s ease;
-        }
-
-        .image-container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(28, 18, 86, 0.15);
-        }
-
-        .image-container img {
-            width: 100%;
-            height: auto;
-            display: block;
-            object-fit: cover;
-        }
-
-        /* Grid Layout for Cards/Stats */
-        .grid-layout {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: clamp(15px, 3vw, 25px);
-            width: 100%;
-            max-width: 1000px;
-            margin: 1.5rem 0;
-        }
-
-        .card {
-            background: var(--light); /* White card background */
-            border-radius: 10px;
-            padding: clamp(20px, 4vw, 30px);
-            box-shadow: 0 5px 15px rgba(28, 18, 86, 0.05); /* Subtle shadow */
-            border-top: 5px solid var(--primary); /* Dark primary top border */
-            transition: all 0.3s ease;
-            text-align: left;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(28, 18, 86, 0.1);
-            border-top-color: var(--secondary); /* Bright blue border on hover */
-        }
-
-        .card h3 {
-            color: var(--primary);
-            margin-bottom: 1rem;
-            font-size: clamp(1.1rem, 3vw, 1.3rem);
-        }
-
-        /* Comparison Table */
-        .comparison-table-container {
-            width: 100%;
-            max-width: 800px;
-            margin: 1.5rem auto;
-            overflow-x: auto;
-            border: 1px solid #e0e0e0; /* Add subtle border */
-            border-radius: 8px;
-        }
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 500px;
-        }
-
-        .comparison-table th, .comparison-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-            font-size: clamp(0.85rem, 2vw, 0.95rem);
-        }
-        .comparison-table tr:last-child td {
-             border-bottom: none; /* Remove border on last row */
-        }
-
-        .comparison-table th {
-            background-color: var(--primary); /* Dark primary header */
-            color: var(--light); /* White text */
-            font-weight: 600;
-        }
-        .comparison-table th:first-child { border-top-left-radius: 7px; } /* Rounded corners */
+        .comparison-table-container { width: 100%; max-width: 800px; margin: 1.5rem auto; overflow-x: auto; border: 1px solid #e0e0e0; border-radius: 8px; }
+        .comparison-table { width: 100%; border-collapse: collapse; min-width: 500px; }
+        .comparison-table th, .comparison-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e0e0e0; font-size: clamp(0.85rem, 2vw, 0.95rem); }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table th { background-color: var(--primary); color: var(--light); font-weight: 600; }
+        .comparison-table th:first-child { border-top-left-radius: 7px; }
         .comparison-table th:last-child { border-top-right-radius: 7px; }
-
-        .comparison-table tr:nth-child(even) td {
-            background-color: var(--accent); /* Light accent for even rows */
-        }
-
-        .comparison-table tr:hover td {
-            background-color: #e4e8f7; /* Slightly darker blue tint on hover */
-        }
-
-        .check-icon { color: var(--success); font-weight: bold; font-size: 1.1em; } /* Cyan check */
+        .comparison-table tr:nth-child(even) td { background-color: var(--accent); }
+        .comparison-table tr:hover td { background-color: #e4e8f7; }
+        .check-icon { color: var(--success); font-weight: bold; font-size: 1.1em; }
         .cross-icon { color: #dc3545; font-weight: bold; }
-        .table-center { text-align: center; vertical-align: middle;}
+        .table-center { text-align: center; vertical-align: middle; }
 
-        /* Two Column Layout */
-        .two-column {
-            display: flex;
-            flex-wrap: wrap;
-            width: 100%;
-            max-width: 1100px;
-            gap: clamp(20px, 4vw, 40px);
-            align-items: center;
-            margin: 1.5rem 0;
-        }
+        .two-column { display: flex; flex-wrap: wrap; width: 100%; max-width: 1100px; gap: clamp(20px, 4vw, 40px); align-items: center; margin: 1.5rem 0; }
+        .column { flex: 1 1 300px; min-width: 280px; display: flex; flex-direction: column; }
+        .column.text-column { text-align: left; justify-content: center; }
 
-        .column {
-            flex: 1 1 300px;
-            min-width: 280px;
-        }
-
-        .column.text-column {
-             text-align: left;
-        }
-
-        /* General Utility Classes */
         .text-primary { color: var(--primary); }
         .text-secondary { color: var(--secondary); }
         .text-success { color: var(--success); }
@@ -369,31 +175,182 @@
         .margin-top-large { margin-top: 2rem; }
         .font-weight-bold { font-weight: bold; }
 
-        /* Contact Icons Styling */
         .contact-info p { margin-bottom: 0.8rem; }
-        .contact-info .fas {
-             color: var(--secondary); /* Bright blue icons */
-             margin-right: 10px;
-             width: 20px; /* Ensure alignment */
-             text-align: center;
+        .contact-info .fas { color: var(--secondary); margin-right: 10px; width: 20px; text-align: center; }
+        .contact-info .highlight-box { width: 100%; box-sizing: border-box; }
+
+        /* Agenda Slide Styles */
+        .agenda-slide-content { justify-content: center; align-items: flex-start; text-align: left; position: relative; overflow: hidden; padding-left: clamp(30px, 8vw, 60px); padding-right: clamp(30px, 8vw, 60px); }
+        .agenda-container { max-width: 700px; width: 100%; z-index: 2; position: relative; }
+        .agenda-slide-content h2 { color: var(--primary); margin-bottom: 0.8rem; display: flex; align-items: center; }
+        .agenda-list { list-style: none; padding-left: 0; margin-top: 2rem; counter-reset: agenda-counter; }
+        .agenda-list li { color: var(--dark); font-size: clamp(1rem, 2.5vw, 1.2rem); margin-bottom: 1.5rem; padding-left: 50px; position: relative; font-weight: 500; display: flex; justify-content: space-between; align-items: baseline; flex-wrap: nowrap; white-space: nowrap; }
+        .agenda-list li::before { counter-increment: agenda-counter; content: counter(agenda-counter, decimal-leading-zero); position: absolute; left: 0; top: 50%; transform: translateY(-50%); background-color: var(--secondary); color: var(--light); border-radius: 50%; width: 35px; height: 35px; font-size: 0.9em; font-weight: bold; display: inline-flex; justify-content: center; align-items: center; line-height: 1; box-shadow: 0 2px 5px rgba(76, 104, 243, 0.3); }
+        .agenda-list li span:first-child { flex-shrink: 0; margin-right: 15px; }
+        .agenda-list li .line-fill { flex-grow: 1; border-bottom: 2px dotted var(--accent); position: relative; bottom: 4px; min-width: 20px; margin-left: 15px; }
+        .agenda-list li .page-ref { font-size: 0.85em; color: var(--text-light-secondary); font-weight: 400; background-color: var(--accent); padding: 2px 8px; border-radius: 4px; flex-shrink: 0; margin-left: 15px; }
+        .agenda-bg-shape { position: absolute; bottom: -15%; right: -20%; width: clamp(250px, 50vw, 400px); height: clamp(250px, 50vw, 400px); background: linear-gradient(135deg, var(--accent), var(--light)); border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; opacity: 0.5; z-index: 1; transform: rotate(15deg); animation: subtlePulse 8s infinite alternate ease-in-out; }
+        @keyframes subtlePulse { from { transform: scale(1) rotate(15deg); opacity: 0.4; } to { transform: scale(1.05) rotate(20deg); opacity: 0.6; } }
+
+        /* Styles for Onboarding Process Slide (NEW) */
+        .onboarding-grid {
+             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Ensure enough space */
+             max-width: 1200px; /* Allow slightly wider grid */
+             gap: clamp(20px, 3vw, 30px); /* Adjust gap */
         }
+        .onboarding-step.card {
+             border-top-color: var(--secondary); /* Use secondary color for top border */
+             display: flex;
+             flex-direction: column;
+             background-color: #ffffff; /* Ensure white background */
+             padding: clamp(15px, 3vw, 25px);
+        }
+        .onboarding-step .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--accent);
+            padding-bottom: 0.8rem;
+        }
+        .onboarding-step .step-number-badge {
+            background-color: var(--primary);
+            color: var(--light);
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            font-size: 1em;
+            font-weight: bold;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            line-height: 1;
+            margin-right: 15px;
+            flex-shrink: 0;
+             box-shadow: 0 2px 5px rgba(28, 18, 86, 0.2);
+        }
+        .onboarding-step h3 {
+            color: var(--primary);
+            margin-bottom: 0; /* Remove default margin */
+            font-size: clamp(1.05rem, 2.8vw, 1.25rem);
+            display: flex;
+            align-items: center;
+            flex-grow: 1; /* Allow title to take space */
+        }
+         .onboarding-step h3 .step-icon {
+             color: var(--secondary);
+             margin-right: 10px;
+             font-size: 1.2em; /* Slightly larger icon */
+         }
+        .onboarding-step h3 small {
+             font-size: 0.7em;
+             font-weight: normal;
+             color: var(--text-light-secondary);
+             margin-left: 8px;
+        }
+        .onboarding-step ul {
+            padding-left: 10px; /* Indent list items slightly */
+            margin-bottom: 0; /* Remove default margin */
+            max-width: 100%;
+            flex-grow: 1; /* Allow list to fill space */
+        }
+        .onboarding-step li {
+            font-size: clamp(0.85rem, 2vw, 0.95rem); /* Adjust font size */
+            line-height: 1.6;
+            padding-left: 20px; /* Adjust padding for checkmark */
+            margin-bottom: 0.5rem;
+            color: var(--text-light-secondary); /* Use subtle color for details */
+        }
+        .onboarding-step li::before {
+            color: var(--success); /* Use success color for check */
+            left: -5px; /* Adjust position */
+             top: 3px;
+             font-size: 0.9em;
+        }
+
+        /* Annotation Tool Styles */
+        .annotation-tools {
+            position: fixed;
+            bottom: clamp(15px, 3vh, 25px);
+            left: clamp(15px, 3vw, 25px);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 101;
+        }
+        .anno-btn {
+            width: clamp(35px, 7vw, 45px);
+            height: clamp(35px, 7vw, 45px);
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: var(--light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 3px 8px rgba(28, 18, 86, 0.2);
+        }
+        .anno-btn:hover {
+            background-color: var(--secondary);
+            transform: scale(1.1);
+        }
+        .anno-btn.active {
+            background-color: var(--success);
+            color: var(--primary);
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        /* Highlighted Word Style */
+        .word-span.highlighted-word {
+            background-color: var(--highlight-red);
+            /* color: var(--highlight-red-text); */
+            padding: 0.1em 0;
+            margin: -0.1em 0;
+            border-radius: 3px;
+            cursor: crosshair;
+        }
+        .word-span { display: inline; }
+
 
         /* Animations */
         .fade-in { animation: fadeIn 0.7s ease-in-out forwards; }
         .slide-in-up { animation: slideInUp 0.7s ease-in-out forwards; }
         .slide-in-left { animation: slideInLeft 0.7s ease-in-out forwards; }
         .slide-in-right { animation: slideInRight 0.7s ease-in-out forwards; }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideInUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes slideInLeft { from { transform: translateX(-30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes slideInRight { from { transform: translateX(30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
+        /* Responsive Adjustments */
         @media (max-width: 768px) {
              .slide-content { padding-bottom: 100px; }
-             .two-column { flex-direction: column; }
+             .two-column { flex-direction: column; align-items: stretch; }
              .column { flex-basis: auto; width: 100%; }
-             .comparison-table-container { border-radius: 0; border-left: none; border-right: none;} /* Adjust table border on mobile */
+             .comparison-table-container { border-radius: 0; border-left: none; border-right: none;}
+             .image-container { width: 90%; max-width: 400px;}
+
+             /* Agenda Responsive */
+            .agenda-slide-content { padding-left: clamp(20px, 5vw, 40px); padding-right: clamp(20px, 5vw, 40px); align-items: center; text-align: center; }
+             .agenda-container { max-width: 90%; }
+            .agenda-slide-content h2 { justify-content: center; }
+             .agenda-list li { padding-left: 45px; margin-bottom: 1.2rem; white-space: normal; flex-wrap: wrap; justify-content: flex-start; }
+             .agenda-list li::before { width: 30px; height: 30px; font-size: 0.8em; }
+             .agenda-list li span:first-child { margin-right: 10px; width: 100%; text-align: left; }
+            .agenda-list li .line-fill { display: none; }
+             .agenda-list li .page-ref { margin-left: 0; margin-top: 5px; width: 100%; text-align: left; display: inline-block; background: none; padding: 0; font-style: italic; }
+             .agenda-bg-shape { width: 60vw; height: 60vw; bottom: -10%; right: -25%; }
+
+             /* Onboarding Responsive */
+             .onboarding-grid { grid-template-columns: 1fr; }
+             .onboarding-step.card { padding: 20px; }
+             .onboarding-step h3 { font-size: 1.1rem; }
+             .onboarding-step li { font-size: 0.9rem; }
+
+             /* Adjust annotation tools for mobile */
+             .annotation-tools { bottom: 80px; }
         }
 
         @media (max-width: 480px) {
@@ -401,6 +358,9 @@
             h2 { font-size: 1.3rem; }
             p, li { font-size: 0.9rem; }
             .btn { padding: 10px 20px; }
+            .card { padding: 15px; }
+            .highlight-box { padding: 15px; }
+             .agenda-list li { font-size: 0.95rem; }
         }
 
     </style>
@@ -412,9 +372,8 @@
         <!-- Slide 1: Title Slide -->
         <div class="slide active" id="slide1">
             <div class="slide-header">
-                <!-- Updated Logo -->
                 <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
-                <div class="slide-number">1 / 8</div>
+                <div class="slide-number">1 / 11</div>
             </div>
             <div class="slide-content">
                 <h1 class="fade-in">Scale Your Business Smarter, Not Harder</h1>
@@ -426,234 +385,226 @@
             </div>
         </div>
 
-        <!-- Slide 2: The Growth Challenge -->
+        <!-- Slide 2: Agenda -->
         <div class="slide" id="slide2">
             <div class="slide-header">
                 <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
-                <div class="slide-number">2 / 8</div>
+                <div class="slide-number">2 / 11</div>
+            </div>
+            <div class="slide-content agenda-slide-content">
+                <div class="agenda-container fade-in">
+                    <h2 class="slide-in-left"><i class="fas fa-stream" style="margin-right: 10px; color: var(--success);"></i>Here's What We'll Cover</h2>
+                    <p class="subtle slide-in-left" style="animation-delay: 0.1s;">A roadmap for scaling your business effectively with VirtuCall PH.</p>
+
+                    <ol class="agenda-list">
+                        <li class="slide-in-up" style="animation-delay: 0.2s;"><span>The Scaling Dilemma</span> <span class="line-fill"></span> <span class="page-ref">Slide 3</span></li>
+                        <li class="slide-in-up" style="animation-delay: 0.3s;"><span>The Outsourcing Advantage</span> <span class="line-fill"></span> <span class="page-ref">Slide 4</span></li>
+                        <li class="slide-in-up" style="animation-delay: 0.4s;"><span>In-House vs. Outsourcing</span> <span class="line-fill"></span> <span class="page-ref">Slide 5</span></li>
+                        <li class="slide-in-up" style="animation-delay: 0.5s;"><span>VirtuCall PH Cost Efficiency</span> <span class="line-fill"></span> <span class="page-ref">Slide 6</span></li>
+                        <li class="slide-in-up" style="animation-delay: 0.6s;"><span>Our Commitment to Quality</span> <span class="line-fill"></span> <span class="page-ref">Slide 7</span></li>
+                        <li class="slide-in-up" style="animation-delay: 0.7s;"><span>Case Study: Cleaning Service Success</span> <span class="line-fill"></span> <span class="page-ref">Slide 8</span></li>
+                        <li class="slide-in-up" style="animation-delay: 0.8s;"><span>Our Seamless Onboarding</span> <span class="line-fill"></span> <span class="page-ref">Slide 9</span></li>
+                        <li class="slide-in-up" style="animation-delay: 0.9s;"><span>Getting Started Process</span> <span class="line-fill"></span> <span class="page-ref">Slide 10</span></li>
+                        <li class="slide-in-up" style="animation-delay: 1.0s;"><span>Next Steps & Partnership</span> <span class="line-fill"></span> <span class="page-ref">Slide 11</span></li>
+                    </ol>
+                </div>
+                 <div class="agenda-bg-shape"></div>
+            </div>
+        </div>
+
+        <!-- Slide 3: The Growth Challenge -->
+        <div class="slide" id="slide3">
+            <div class="slide-header">
+                <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
+                <div class="slide-number">3 / 11</div>
             </div>
             <div class="slide-content">
                 <h2 class="slide-in-left">The Scaling Dilemma: Growing Pains are Real</h2>
                 <p class="fade-in subtle" style="animation-delay: 0.2s;">Rapid growth is exciting, but it brings significant operational challenges that can slow you down.</p>
-
                 <div class="grid-layout">
-                    <div class="card fade-in" style="animation-delay: 0.4s;">
-                        <h3>Resource Strain</h3>
-                        <p>Finding, hiring, and training new staff quickly is costly and time-consuming, diverting focus from core activities.</p>
-                    </div>
-                    <div class="card fade-in" style="animation-delay: 0.5s;">
-                        <h3>Rising Overhead</h3>
-                        <p>Expanding in-house teams means more office space, equipment, management layers, and administrative burden.</p>
-                    </div>
-                    <div class="card fade-in" style="animation-delay: 0.6s;">
-                        <h3>Maintaining Quality</h3>
-                        <p>Ensuring consistent service quality and operational efficiency becomes harder as complexity increases.</p>
-                    </div>
-                     <div class="card fade-in" style="animation-delay: 0.7s;">
-                        <h3>Scalability Hurdles</h3>
-                        <p>Scaling operations up (or down) quickly to meet fluctuating demand is difficult with fixed in-house structures.</p>
-                    </div>
+                    <div class="card fade-in" style="animation-delay: 0.4s;"> <h3>Resource Strain</h3> <p>Finding, hiring, and training new staff quickly is costly and time-consuming, diverting focus from core activities.</p> </div>
+                    <div class="card fade-in" style="animation-delay: 0.5s;"> <h3>Rising Overhead</h3> <p>Expanding in-house teams means more office space, equipment, management layers, and administrative burden.</p> </div>
+                    <div class="card fade-in" style="animation-delay: 0.6s;"> <h3>Maintaining Quality</h3> <p>Ensuring consistent service quality and operational efficiency becomes harder as complexity increases.</p> </div>
+                    <div class="card fade-in" style="animation-delay: 0.7s;"> <h3>Scalability Hurdles</h3> <p>Scaling operations up (or down) quickly to meet fluctuating demand is difficult with fixed in-house structures.</p> </div>
                 </div>
                  <p class="text-primary fade-in font-weight-bold" style="animation-delay: 0.8s;">Is your operational capacity keeping pace with your ambition?</p>
             </div>
         </div>
 
-        <!-- Slide 3: Introducing Outsourcing -->
-        <div class="slide" id="slide3">
+        <!-- Slide 4: Introducing Outsourcing -->
+        <div class="slide" id="slide4">
             <div class="slide-header">
                 <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
-                <div class="slide-number">3 / 8</div>
+                <div class="slide-number">4 / 11</div>
             </div>
             <div class="slide-content">
                 <h2 class="slide-in-left">The Strategic Advantage: Smart Outsourcing</h2>
                  <p class="fade-in subtle" style="animation-delay: 0.2s;">Forward-thinking businesses leverage outsourcing not just for cost savings, but as a powerful tool for strategic growth.</p>
-
                 <div class="two-column margin-top-large">
-                     <div class="column slide-in-left" style="animation-delay: 0.4s;">
-                        <div class="image-container">
-                            <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMDkyMnwwfDF8c2VhcmNofDR8fGJ1c2luZXNzJTIwcGFydG5lcnNoaXB8ZW58MHx8fHwxNjgyNjE0MjYz&ixlib=rb-4.0.3&q=80&w=1080" alt="Business partners collaborating">
-                        </div>
-                    </div>
+                     <div class="column slide-in-left" style="animation-delay: 0.4s;"> <div class="image-container"> <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMDkyMnwwfDF8c2VhcmNofDR8fGJ1c2luZXNzJTIwcGFydG5lcnNoaXB8ZW58MHx8fHwxNjgyNjE0MjYz&ixlib=rb-4.0.3&q=80&w=1080" alt="Business partners collaborating"> </div> </div>
                     <div class="column text-column slide-in-right" style="animation-delay: 0.6s;">
                         <h3 class="text-primary">Why Growing Businesses Outsource:</h3>
-                        <ul>
-                            <li><strong>Access Expertise Instantly:</strong> Tap into specialized skills without lengthy recruitment cycles.</li>
-                            <li><strong>Enhance Scalability:</strong> Easily adjust operational capacity to match demand.</li>
-                            <li><strong>Sharpen Core Focus:</strong> Free up internal resources to concentrate on innovation and strategy.</li>
-                            <li><strong>Improve Efficiency:</strong> Benefit from optimized processes and experienced teams.</li>
-                             <li><strong>Accelerate Speed-to-Market:</strong> Launch new services or support functions faster.</li>
-                        </ul>
+                        <ul> <li><strong>Access Expertise Instantly:</strong> Tap into specialized skills without lengthy recruitment cycles.</li> <li><strong>Enhance Scalability:</strong> Easily adjust operational capacity to match demand.</li> <li><strong>Sharpen Core Focus:</strong> Free up internal resources to concentrate on innovation and strategy.</li> <li><strong>Improve Efficiency:</strong> Benefit from optimized processes and experienced teams.</li> <li><strong>Accelerate Speed-to-Market:</strong> Launch new services or support functions faster.</li> </ul>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Slide 4: In-House vs. Outsource -->
-        <div class="slide" id="slide4">
+        <!-- Slide 5: In-House vs. Outsource -->
+        <div class="slide" id="slide5">
             <div class="slide-header">
                 <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
-                <div class="slide-number">4 / 8</div>
+                <div class="slide-number">5 / 11</div>
             </div>
             <div class="slide-content">
                  <h2 class="slide-in-left">In-House Hiring vs. Strategic Outsourcing</h2>
                 <p class="fade-in subtle" style="animation-delay: 0.2s;">Let's compare the true implications of building internally versus partnering with an expert.</p>
-
                 <div class="comparison-table-container fade-in" style="animation-delay: 0.4s;">
                     <table class="comparison-table">
-                        <thead>
-                            <tr>
-                                <th>Factor</th>
-                                <th>In-House Team</th>
-                                <th>Outsourcing (VirtuCall PH)</th>
-                            </tr>
-                        </thead>
+                        <thead> <tr> <th>Factor</th> <th>In-House Team</th> <th>Outsourcing (VirtuCall PH)</th> </tr> </thead>
                         <tbody>
-                            <tr>
-                                <td>Recruitment & Hiring</td>
-                                <td>Weeks/Months, High Cost</td>
-                                <td class="table-center"><i class="fas fa-check check-icon"></i> Handled by Partner</td>
-                            </tr>
-                             <tr>
-                                <td>Training & Onboarding</td>
-                                <td>Significant Time & Resource Investment</td>
-                                <td class="table-center"><i class="fas fa-check check-icon"></i> Specialized & Included</td>
-                            </tr>
-                            <tr>
-                                <td>Salaries & Benefits</td>
-                                <td>Full Burden + Hidden Costs (~30%)</td>
-                                <td class="table-center"><i class="fas fa-check check-icon"></i> Predictable, Lower Cost</td>
-                            </tr>
-                             <tr>
-                                <td>Infrastructure & Tools</td>
-                                <td>Requires Capital Expenditure (Office, IT)</td>
-                                <td class="table-center"><i class="fas fa-check check-icon"></i> Included in Service</td>
-                            </tr>
-                            <tr>
-                                <td>Management Overhead</td>
-                                <td>Requires Dedicated Supervision</td>
-                                 <td class="table-center"><i class="fas fa-check check-icon"></i> Included Account Management</td>
-                            </tr>
-                            <tr>
-                                <td>Scalability</td>
-                                <td>Slow, Inflexible</td>
-                                <td class="table-center"><i class="fas fa-check check-icon"></i> Fast, On-Demand</td>
-                            </tr>
-                            <tr>
-                                <td>Focus</td>
-                                <td>Diluted by Operational Tasks</td>
-                                <td class="table-center"><i class="fas fa-check check-icon"></i> Enables Core Business Focus</td>
-                            </tr>
+                            <tr> <td>Recruitment & Hiring</td> <td>Weeks/Months, High Cost</td> <td class="table-center"><i class="fas fa-check check-icon"></i> Handled</td> </tr>
+                            <tr> <td>Training & Onboarding</td> <td>Significant Time & Resource Investment</td> <td class="table-center"><i class="fas fa-check check-icon"></i> Specialized</td> </tr>
+                            <tr> <td>Salaries & Benefits</td> <td>Full Burden + Hidden Costs (~30%)</td> <td class="table-center"><i class="fas fa-check check-icon"></i> Predictable</td> </tr>
+                            <tr> <td>Infrastructure & Tools</td> <td>Capital Expenditure (Office, IT)</td> <td class="table-center"><i class="fas fa-check check-icon"></i> Included</td> </tr>
+                            <tr> <td>Management Overhead</td> <td>Requires Dedicated Supervision</td> <td class="table-center"><i class="fas fa-check check-icon"></i> Included</td> </tr>
+                            <tr> <td>Scalability</td> <td>Slow, Inflexible</td> <td class="table-center"><i class="fas fa-check check-icon"></i> On-Demand</td> </tr>
+                            <tr> <td>Focus</td> <td>Diluted by Operations</td> <td class="table-center"><i class="fas fa-check check-icon"></i> Core Business</td> </tr>
                         </tbody>
                     </table>
                 </div>
-                 <p class="fade-in margin-top-large subtle" style="animation-delay: 0.6s;">Outsourcing transforms fixed overheads into variable, predictable costs, directly tied to your needs.</p>
+                 <p class="fade-in margin-top-large subtle" style="animation-delay: 0.6s;">Outsourcing transforms fixed overheads into variable, predictable costs.</p>
             </div>
         </div>
 
-        <!-- Slide 5: Why VirtuCall PH - Cost Efficiency -->
-        <div class="slide" id="slide5">
+        <!-- Slide 6: Why VirtuCall PH - Cost Efficiency -->
+        <div class="slide" id="slide6">
             <div class="slide-header">
                 <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
-                 <div class="slide-number">5 / 8</div>
+                 <div class="slide-number">6 / 11</div>
             </div>
             <div class="slide-content">
                 <h2 class="slide-in-left">The VirtuCall PH Advantage: Unbeatable Cost-Efficiency</h2>
                 <p class="fade-in subtle" style="animation-delay: 0.2s;">We deliver exceptional value by combining talent, technology, and optimized processes – without sacrificing quality.</p>
-
                  <div class="two-column margin-top-large">
                     <div class="column text-column slide-in-left" style="animation-delay: 0.4s;">
-                         <h3 class="text-primary">How We Make Outsourcing Highly Cost-Effective:</h3>
-                        <ul>
-                            <li><strong>Access to Global Talent Pool:</strong> Leverage skilled professionals in the Philippines at competitive rates.</li>
-                            <li><strong>Streamlined Operations:</strong> Optimized workflows and efficient management reduce overhead.</li>
-                            <li><strong>Technology Leverage:</strong> Utilizing advanced tools enhances productivity and lowers operational costs.</li>
-                             <li><strong>Reduced Infrastructure Needs:</strong> We handle the office space, IT, and utilities – you don't have to.</li>
-                            <li><strong>Scalable Pricing Models:</strong> Pay for the capacity you need, when you need it.</li>
-                        </ul>
-                        <div class="highlight-box fade-in" style="animation-delay: 0.8s;">
-                           <h3 class="text-center"><span class="text-secondary font-weight-bold">Typical Savings: 40-60%</span></h3>
-                           <p class="text-center subtle">Clients often see significant cost reductions compared to building and managing an equivalent in-house team, freeing up capital for growth initiatives.</p>
-                        </div>
+                         <h3 class="text-primary">How We Drive Cost-Effectiveness:</h3>
+                        <ul> <li><strong>Global Talent Pool Access:</strong> Skilled professionals at competitive rates.</li> <li><strong>Streamlined Operations:</strong> Optimized workflows reduce overhead.</li> <li><strong>Technology Leverage:</strong> Advanced tools enhance productivity.</li> <li><strong>Reduced Infrastructure:</strong> We handle office, IT, utilities.</li> <li><strong>Scalable Pricing:</strong> Pay only for the capacity you need.</li> </ul>
+                        <div class="highlight-box fade-in" style="animation-delay: 0.8s;"> <h3 class="text-center"><span class="text-secondary font-weight-bold">Typical Savings: 40-60%</span></h3> <p class="text-center subtle">Compared to equivalent in-house teams, freeing up capital for growth.</p> </div>
                     </div>
-                     <div class="column slide-in-right" style="animation-delay: 0.6s;">
-                        <div class="image-container">
-                             <img src="https://images.unsplash.com/photo-1579621970795-87facc2f976d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMDkyMnwwfDF8c2VhcmNofDEwfHxjb3N0JTIwc2F2aW5nfGVufDB8fHx8MTY4MjYxNTUwOQ&ixlib=rb-4.0.3&q=80&w=1080" alt="Visual representation of cost savings">
-                        </div>
-                    </div>
+                     <div class="column slide-in-right" style="animation-delay: 0.6s;"> <div class="image-container"> <img src="https://images.unsplash.com/photo-1579621970795-87facc2f976d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMDkyMnwwfDF8c2VhcmNofDEwfHxjb3N0JTIwc2F2aW5nfGVufDB8fHx8MTY4MjYxNTUwOQ&ixlib=rb-4.0.3&q=80&w=1080" alt="Visual representation of cost savings"> </div> </div>
                 </div>
             </div>
         </div>
 
-        <!-- Slide 6: Quality & Expertise -->
-        <div class="slide" id="slide6">
+        <!-- Slide 7: Quality & Expertise -->
+        <div class="slide" id="slide7">
              <div class="slide-header">
                 <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
-                <div class="slide-number">6 / 8</div>
+                <div class="slide-number">7 / 11</div>
             </div>
             <div class="slide-content">
                  <h2 class="slide-in-left">Beyond Cost: Our Commitment to Quality & Expertise</h2>
-                 <p class="fade-in subtle" style="animation-delay: 0.2s;">Cost efficiency means little without reliable performance. We ensure your outsourced functions operate seamlessly and effectively.</p>
-
+                 <p class="fade-in subtle" style="animation-delay: 0.2s;">Cost efficiency means little without reliable performance. We ensure your outsourced functions operate seamlessly.</p>
                 <div class="grid-layout">
-                     <div class="card fade-in" style="animation-delay: 0.4s;">
-                        <h3>Rigorous Training</h3>
-                        <p>Our teams undergo comprehensive training specific to your industry, brand voice, and operational requirements.</p>
-                    </div>
-                    <div class="card fade-in" style="animation-delay: 0.5s;">
-                        <h3>Quality Assurance</h3>
-                        <p>Continuous monitoring, performance metrics, and feedback loops ensure high standards are always met.</p>
-                    </div>
-                     <div class="card fade-in" style="animation-delay: 0.6s;">
-                        <h3>Dedicated Teams</h3>
-                         <p>We provide dedicated agents and account managers who become extensions of your own team.</p>
-                    </div>
-                    <div class="card fade-in" style="animation-delay: 0.7s;">
-                         <h3>Transparent Reporting</h3>
-                        <p>Gain full visibility into performance with regular, detailed reports and insights.</p>
-                    </div>
+                     <div class="card fade-in" style="animation-delay: 0.4s;"> <h3>Rigorous Training</h3> <p>Comprehensive training on your industry, brand voice, and requirements.</p> </div>
+                     <div class="card fade-in" style="animation-delay: 0.5s;"> <h3>Quality Assurance</h3> <p>Continuous monitoring, metrics, and feedback loops maintain high standards.</p> </div>
+                     <div class="card fade-in" style="animation-delay: 0.6s;"> <h3>Dedicated Teams</h3> <p>Assigned agents and managers become extensions of your team.</p> </div>
+                     <div class="card fade-in" style="animation-delay: 0.7s;"> <h3>Transparent Reporting</h3> <p>Full visibility into performance with regular reports and insights.</p> </div>
                 </div>
-                 <div class="highlight-box fade-in text-center" style="animation-delay: 0.8s; max-width: 700px; margin: 1.5rem auto;">
-                     <p class="text-secondary font-weight-bold">We act as a true partner, invested in your success and representing your brand professionally.</p>
+                 <div class="highlight-box fade-in text-center" style="animation-delay: 0.8s; max-width: 700px; margin: 1.5rem auto;"> <p class="text-secondary font-weight-bold">We act as a true partner, invested in your success and representing your brand professionally.</p> </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Case Study - Cleaning Service -->
+        <div class="slide" id="slide8">
+            <div class="slide-header">
+                <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
+                <div class="slide-number">8 / 11</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="slide-in-left">Case Study: Driving $10k+/Month for Our Cleaning Partner</h2>
+                <p class="fade-in subtle" style="animation-delay: 0.2s;">How VirtuCall PH became the growth engine for a successful Singaporean cleaning business.</p>
+                <div class="two-column margin-top-large">
+                    <div class="column text-column slide-in-left" style="animation-delay: 0.4s;">
+                        <h3 class="text-primary">Client Profile:</h3> <p style="margin-bottom: 1.5rem;" class="subtle">Commercial & Residential Cleaning Service (Singapore).</p>
+                        <h3 class="text-primary">The Challenge:</h3> <ul> <li>Needed consistent, high-quality lead generation.</li> <li>Owner spending too much time prospecting.</li> <li>Difficulty scaling outreach effectively.</li> <li>Wanted predictable revenue growth.</li> </ul>
+                        <h3 class="text-primary margin-top-large">Our Solution:</h3> <ul> <li>Dedicated appointment setting team.</li> <li>Targeted outbound calling campaigns.</li> <li>Professional script & lead qualification.</li> <li>Seamless CRM integration & reporting.</li> </ul>
+                    </div>
+                    <div class="column slide-in-right" style="animation-delay: 0.6s;">
+                        <div class="card" style="border-top-color: var(--success);">
+                             <h3 class="text-center text-success"><i class="fas fa-chart-line"></i> The Results</h3>
+                             <p class="text-center" style="font-size: 1.4em; font-weight: bold; color: var(--primary); margin-bottom: 1rem;"> $10,000+ <br>New Monthly Revenue Generated </p>
+                             <ul style="max-width: 100%;"> <li>Steady flow of qualified appointments.</li> <li>Significant ROI achieved within months.</li> <li>Freed up owner's time for core tasks.</li> <li>Enabled predictable business scaling.</li> </ul>
+                        </div>
+                        <div class="highlight-box text-center fade-in" style="margin-top: 2rem; border-left-color: var(--secondary); animation-delay: 0.8s;">
+                            <h3 class="text-secondary">Opportunity: Be Our FIRST US Cleaning Partner!</h3>
+                            <p class="subtle">We've proven our model delivers results. Now seeking our foundational US partner.</p>
+                            <p class="font-weight-bold">Let's replicate this success for YOUR business!</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-         <!-- Slide 7: Our Simple Process -->
-        <div class="slide" id="slide7">
+        <!-- Slide 9: Client Onboarding Process (NEW) -->
+        <div class="slide" id="slide9">
             <div class="slide-header">
                 <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
-                <div class="slide-number">7 / 8</div>
+                <div class="slide-number">9 / 11</div>
             </div>
             <div class="slide-content">
-                 <h2 class="slide-in-left">Getting Started: A Seamless Transition</h2>
-                <p class="fade-in subtle" style="animation-delay: 0.2s;">Our structured onboarding process makes partnering with VirtuCall PH straightforward and efficient.</p>
+                <h2 class="slide-in-left">Our Seamless Onboarding Journey</h2>
+                <p class="fade-in subtle" style="animation-delay: 0.1s;">A clear, structured process to ensure a smooth launch and long-term success.</p>
+                <div class="grid-layout onboarding-grid">
+                    <div class="card onboarding-step fade-in" style="animation-delay: 0.2s;">
+                        <div class="step-header"> <span class="step-number-badge">01</span> <h3><i class="fas fa-search-plus step-icon"></i>Discovery & Qualification</h3> </div>
+                        <ul> <li>Understand industry, services, team, sales setup.</li> <li>Identify goals, pain points, budget, current efforts.</li> <li>Confirm growth mindset & partnership alignment.</li> </ul>
+                    </div>
+                    <div class="card onboarding-step fade-in" style="animation-delay: 0.3s;">
+                         <div class="step-header"> <span class="step-number-badge">02</span> <h3><i class="fas fa-users-cog step-icon"></i>Talent Matching</h3> </div>
+                        <ul> <li>Handpick agents experienced in your industry.</li> <li>Absorb client's product/service knowledge.</li> <li>Align messaging with brand voice & goals.</li> </ul>
+                    </div>
+                    <div class="card onboarding-step fade-in" style="animation-delay: 0.4s;">
+                        <div class="step-header"> <span class="step-number-badge">03</span> <h3><i class="fas fa-tasks step-icon"></i>Lead Generation Prep <small>(5 Days)</small></h3> </div>
+                         <ul> <li>Manual/automated lead sourcing by agent.</li> <li>Option for client-provided database.</li> <li>Prioritize quality and relevance before outreach.</li> </ul>
+                    </div>
+                    <div class="card onboarding-step fade-in" style="animation-delay: 0.5s;">
+                         <div class="step-header"> <span class="step-number-badge">04</span> <h3><i class="fas fa-microphone-alt step-icon"></i>Mock Call & Readiness</h3> </div>
+                        <ul> <li>Assess script fluency & objection handling.</li> <li>Ensure brand alignment in mock scenarios.</li> <li>Final calibration before going live.</li> </ul>
+                    </div>
+                    <div class="card onboarding-step fade-in" style="animation-delay: 0.6s;">
+                        <div class="step-header"> <span class="step-number-badge">05</span> <h3><i class="fas fa-rocket step-icon"></i>Go Live + Communication</h3> </div>
+                        <ul> <li>Begin live calling campaign execution.</li> <li>Receive Daily Reports, Weekly Evals, Monthly Reviews.</li> <li>Constant feedback loop established.</li> </ul>
+                    </div>
+                    <div class="card onboarding-step fade-in" style="animation-delay: 0.7s;">
+                        <div class="step-header"> <span class="step-number-badge">06</span> <h3><i class="fas fa-sync-alt step-icon"></i>Continuous Optimization</h3> </div>
+                        <ul> <li>Adjust scripts, targeting, strategy based on data.</li> <li>Proactive communication on performance.</li> <li>Ensure campaign stays aligned with evolving goals.</li> </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- Slide 10: Getting Started Process (Previously Slide 9) -->
+        <div class="slide" id="slide10">
+            <div class="slide-header">
+                <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
+                <div class="slide-number">10 / 11</div>
+            </div>
+            <div class="slide-content">
+                 <h2 class="slide-in-left">Getting Started: Simple & Efficient</h2>
+                <p class="fade-in subtle" style="animation-delay: 0.2s;">Our structured process makes partnering with VirtuCall PH straightforward.</p>
                  <div class="two-column margin-top-large">
                      <div class="column slide-in-left" style="animation-delay: 0.4s;">
-                         <div class="image-container">
-                            <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMDkyMnwwfDF8c2VhcmNofDJ8fHBsYW5uaW5nJTIwc2Vzc2lvbnxlbnwwfHx8fDE2ODI2MTY0MzA&ixlib=rb-4.0.3&q=80&w=1080" alt="Team planning session">
-                        </div>
+                         <div class="image-container"> <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMDkyMnwwfDF8c2VhcmNofDJ8fHBsYW5uaW5nJTIwc2Vzc2lvbnxlbnwwfHx8fDE2ODI2MTY0MzA&ixlib=rb-4.0.3&q=80&w=1080" alt="Team planning session"> </div>
                     </div>
                      <div class="column text-column slide-in-right" style="animation-delay: 0.6s;">
-                        <h3 class="text-primary">Our 4-Step Process:</h3>
-                        <!-- Using custom styled steps instead of default list -->
+                        <h3 class="text-primary">The 4 Key Steps:</h3>
                         <div style="text-align: left; margin-top: 1rem;">
-                            <div style="display: flex; align-items: flex-start; margin-bottom: 1rem;">
-                                <span style="background-color: var(--secondary); color: white; border-radius: 50%; width: 25px; height: 25px; display: inline-flex; justify-content: center; align-items: center; font-weight: bold; margin-right: 15px; flex-shrink: 0;">1</span>
-                                <div><strong>Discovery & Strategy:</strong> We deeply understand your goals, processes, and requirements.</div>
-                            </div>
-                             <div style="display: flex; align-items: flex-start; margin-bottom: 1rem;">
-                                <span style="background-color: var(--secondary); color: white; border-radius: 50%; width: 25px; height: 25px; display: inline-flex; justify-content: center; align-items: center; font-weight: bold; margin-right: 15px; flex-shrink: 0;">2</span>
-                                <div><strong>Custom Solution Design:</strong> We tailor our services, team structure, and workflows to your needs.</div>
-                            </div>
-                             <div style="display: flex; align-items: flex-start; margin-bottom: 1rem;">
-                                <span style="background-color: var(--secondary); color: white; border-radius: 50%; width: 25px; height: 25px; display: inline-flex; justify-content: center; align-items: center; font-weight: bold; margin-right: 15px; flex-shrink: 0;">3</span>
-                                <div><strong>Implementation & Training:</strong> We set up systems, train the dedicated team, and integrate seamlessly.</div>
-                            </div>
-                             <div style="display: flex; align-items: flex-start; margin-bottom: 1rem;">
-                                <span style="background-color: var(--secondary); color: white; border-radius: 50%; width: 25px; height: 25px; display: inline-flex; justify-content: center; align-items: center; font-weight: bold; margin-right: 15px; flex-shrink: 0;">4</span>
-                                <div><strong>Launch & Optimize:</strong> Go live with continuous monitoring, reporting, and performance optimization.</div>
-                            </div>
+                             <div style="display: flex; align-items: flex-start; margin-bottom: 1rem;"> <span style="background-color: var(--secondary); color: white; border-radius: 50%; width: 25px; height: 25px; display: inline-flex; justify-content: center; align-items: center; font-weight: bold; margin-right: 15px; flex-shrink: 0;">1</span> <div><strong>Discovery & Strategy:</strong> Understand your goals, processes, requirements.</div> </div>
+                             <div style="display: flex; align-items: flex-start; margin-bottom: 1rem;"> <span style="background-color: var(--secondary); color: white; border-radius: 50%; width: 25px; height: 25px; display: inline-flex; justify-content: center; align-items: center; font-weight: bold; margin-right: 15px; flex-shrink: 0;">2</span> <div><strong>Custom Solution Design:</strong> Tailor services, team, workflows to your needs.</div> </div>
+                             <div style="display: flex; align-items: flex-start; margin-bottom: 1rem;"> <span style="background-color: var(--secondary); color: white; border-radius: 50%; width: 25px; height: 25px; display: inline-flex; justify-content: center; align-items: center; font-weight: bold; margin-right: 15px; flex-shrink: 0;">3</span> <div><strong>Implementation & Training:</strong> Set up systems, train team, integrate seamlessly.</div> </div>
+                             <div style="display: flex; align-items: flex-start; margin-bottom: 1rem;"> <span style="background-color: var(--secondary); color: white; border-radius: 50%; width: 25px; height: 25px; display: inline-flex; justify-content: center; align-items: center; font-weight: bold; margin-right: 15px; flex-shrink: 0;">4</span> <div><strong>Launch & Optimize:</strong> Go live with continuous monitoring & optimization.</div> </div>
                         </div>
                     </div>
                 </div>
@@ -661,40 +612,28 @@
             </div>
         </div>
 
-        <!-- Slide 8: Call to Action -->
-        <div class="slide" id="slide8">
-            <div class="slide-header">
+        <!-- Slide 11: Call to Action (Previously Slide 10) -->
+        <div class="slide" id="slide11">
+             <div class="slide-header">
                  <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
-                <div class="slide-number">8 / 8</div>
+                <div class="slide-number">11 / 11</div>
             </div>
             <div class="slide-content">
-                <h2 class="slide-in-left">Ready to Scale Smarter?</h2>
-                <p class="fade-in subtle" style="animation-delay: 0.2s;">Discover how VirtuCall PH can provide the cost-effective, high-quality outsourcing solution your growing business needs.</p>
-
+                <h2 class="slide-in-left">Ready to Be Our Next Success Story?</h2>
+                <p class="fade-in subtle" style="animation-delay: 0.2s;">Especially if you're a US-based cleaning service looking for predictable, cost-effective growth!</p>
                  <div class="two-column margin-top-large">
                     <div class="column text-column slide-in-left" style="animation-delay: 0.4s;">
                          <h3 class="text-primary">Let's Discuss Your Needs:</h3>
-                        <p class="subtle">Schedule a free, no-obligation consultation to explore how we can help you:</p>
-                        <ul>
-                            <li>Reduce operational costs significantly</li>
-                            <li>Improve efficiency and productivity</li>
-                            <li>Scale your operations flexibly</li>
-                            <li>Focus on your core business growth</li>
-                        </ul>
-                        <a href="mailto:flynnvcph@nitchiebotai.online" class="btn fade-in" style="animation-delay: 0.8s;">Schedule Your Consultation</a>
+                        <p class="subtle">Schedule a free consultation to see how we can help you achieve results like:</p>
+                        <ul> <li><span class="text-success font-weight-bold">Consistently generate $10k+ monthly revenue</span></li> <li>Significantly reduce prospecting time & cost</li> <li>Improve efficiency and booking rates</li> <li>Scale your cleaning business predictably</li> </ul>
+                        <a href="mailto:flynnvcph@nitchiebotai.online" class="btn fade-in" style="animation-delay: 0.8s;">Book Your Free Consultation</a>
                      </div>
                     <div class="column slide-in-right" style="animation-delay: 0.6s;">
                         <div class="highlight-box contact-info">
                              <h3 class="text-center text-primary">Contact Us</h3>
-                            <div style="text-align: left; margin-top: 1rem; padding-left: 20px;">
-                                <p><i class="fas fa-envelope"></i> flynnvcph@nitchiebotai.online</p>
-                                <p><i class="fas fa-phone"></i> +1 (267) 478-1798</p>
-                                <p><i class="fas fa-globe"></i> www.virtucallph.com (Example)</p>
-                            </div>
+                            <div style="text-align: left; margin-top: 1rem; padding-left: 20px;"> <p><i class="fas fa-envelope"></i> flynnvcph@nitchiebotai.online</p> <p><i class="fas fa-phone"></i> +1 (267) 478-1798</p> <p><i class="fas fa-globe"></i> www.virtucallph.com (Example)</p> </div>
                         </div>
-                         <div class="image-container" style="margin-top: 1.5rem;">
-                            <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMDkyMnwwfDF8c2VhcmNofDN8fG1lZXRpbmd8ZW58MHx8fHwxNjgyNjE3MDUw&ixlib=rb-4.0.3&q=80&w=1080" alt="Business meeting handshake">
-                        </div>
+                         <div class="image-container" style="margin-top: 1.5rem;"> <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMDkyMnwwfDF8c2VhcmNofDN8fG1lZXRpbmd8ZW58MHx8fHwxNjgyNjE3MDUw&ixlib=rb-4.0.3&q=80&w=1080" alt="Business meeting handshake"> </div>
                     </div>
                 </div>
             </div>
@@ -705,123 +644,236 @@
             <button class="nav-btn" id="prev-btn" aria-label="Previous Slide"><i class="fas fa-arrow-left"></i></button>
             <button class="nav-btn" id="next-btn" aria-label="Next Slide"><i class="fas fa-arrow-right"></i></button>
         </div>
-    </div>
 
-    <!-- Same Javascript as before -->
+        <!-- Annotation Tools -->
+        <div class="annotation-tools">
+             <button class="anno-btn" id="pen-btn" aria-label="Toggle Highlighter"><i class="fas fa-highlighter"></i></button>
+             <button class="anno-btn" id="eraser-btn" aria-label="Clear Highlights"><i class="fas fa-eraser"></i></button>
+        </div>
+
+    </div> <!-- End presentation-container -->
+
+    <!-- Javascript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const slides = document.querySelectorAll('.slide');
             const prevBtn = document.getElementById('prev-btn');
             const nextBtn = document.getElementById('next-btn');
-            let currentSlide = 0;
-            const totalSlides = slides.length;
+            const penBtn = document.getElementById('pen-btn');
+            const eraserBtn = document.getElementById('eraser-btn');
+            const presentationContainer = document.querySelector('.presentation-container');
 
-            // Function to update slide visibility and classes
+            let currentSlide = 0;
+            const totalSlides = 11; // ****** UPDATED TOTAL SLIDES to 11 ******
+            let isHighlightingActive = false;
+
+            // --- Word Wrapping Function (Run Once) ---
+            function wrapWordsInSpans() {
+                const selectors = [
+                    '.slide-content p',
+                    '.slide-content li', // Targets direct list items in slide-content
+                    '.slide-content h1',
+                    '.slide-content h2',
+                    // '.slide-content h3', // Avoid double-wrapping if also in cards/boxes
+                    '.card p',
+                    '.card h3', // Include card titles
+                    '.highlight-box p',
+                    '.highlight-box h3', // Include highlight box titles
+                    '.agenda-list li span:first-child', // Target agenda text
+                    '.column.text-column p',
+                    '.column.text-column li',
+                    '.comparison-table td',
+                    '.onboarding-step ul li', // Onboarding list items
+                    '.onboarding-step .step-header h3' // Onboarding step titles
+                ];
+                 const elementsToWrap = document.querySelectorAll(selectors.join(', '));
+
+                elementsToWrap.forEach(element => {
+                    if (element.querySelector('.word-span')) return; // Already processed
+
+                    const childNodes = Array.from(element.childNodes);
+                    childNodes.forEach(node => {
+                        if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim().length > 0) {
+                            const text = node.nodeValue;
+                            const regex = /(\S+)(\s*)/g;
+                            let match;
+                            const fragment = document.createDocumentFragment();
+                            let lastIndex = 0;
+
+                            // Prepend any initial whitespace
+                            const initialWhitespace = text.match(/^\s+/);
+                            if(initialWhitespace) {
+                                fragment.appendChild(document.createTextNode(initialWhitespace[0]));
+                                lastIndex = initialWhitespace[0].length;
+                            }
+
+                            while ((match = regex.exec(text)) !== null) {
+                                // Add any text between the last match and this one (preserves multiple spaces)
+                                if (match.index > lastIndex) {
+                                    fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+                                }
+
+                                const word = match[1];
+                                const whitespace = match[2] || '';
+
+                                if (word) {
+                                    const span = document.createElement('span');
+                                    span.className = 'word-span';
+                                    span.textContent = word;
+                                    fragment.appendChild(span);
+                                }
+                                if (whitespace) {
+                                    fragment.appendChild(document.createTextNode(whitespace));
+                                }
+                                lastIndex = regex.lastIndex;
+                            }
+                             if (fragment.hasChildNodes()) {
+                                node.parentNode.replaceChild(fragment, node);
+                             }
+                        }
+                        // Specifically handle direct child spans in agenda list (prevent double wrapping)
+                        else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'SPAN' && node.closest('.agenda-list li')) {
+                            // We assume these spans are already structured correctly and avoid wrapping their content further
+                        }
+                         // Handle elements like <strong> or <i> inside target elements
+                         else if (node.nodeType === Node.ELEMENT_NODE && !node.querySelector('.word-span')) {
+                             wrapInlineElements(node); // Recursively wrap inline elements if needed
+                         }
+                    });
+                });
+                 console.log("Word wrapping attempt complete.");
+            }
+
+            // Helper function to wrap inline elements like <strong>, <i>
+             function wrapInlineElements(element) {
+                const childNodes = Array.from(element.childNodes);
+                childNodes.forEach(node => {
+                     if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim().length > 0) {
+                         const text = node.nodeValue;
+                         const regex = /(\S+)(\s*)/g;
+                         let match;
+                         const fragment = document.createDocumentFragment();
+                         let lastIndex = 0;
+                         const initialWhitespace = text.match(/^\s+/);
+                         if(initialWhitespace) {
+                             fragment.appendChild(document.createTextNode(initialWhitespace[0]));
+                             lastIndex = initialWhitespace[0].length;
+                         }
+                         while ((match = regex.exec(text)) !== null) {
+                              if (match.index > lastIndex) { fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index))); }
+                             const word = match[1]; const whitespace = match[2] || '';
+                             if (word) { const span = document.createElement('span'); span.className = 'word-span'; span.textContent = word; fragment.appendChild(span); }
+                             if (whitespace) { fragment.appendChild(document.createTextNode(whitespace)); }
+                             lastIndex = regex.lastIndex;
+                         }
+                          if (fragment.hasChildNodes()) { node.parentNode.replaceChild(fragment, node); }
+                     } else if (node.nodeType === Node.ELEMENT_NODE && !node.classList.contains('word-span')) {
+                          wrapInlineElements(node); // Recurse for nested inline elements
+                     }
+                 });
+             }
+
+
+            // --- Slide Navigation Logic ---
             function showSlide(index) {
                 slides.forEach((slide, i) => {
                     slide.classList.remove('active', 'prev', 'next');
                     if (i === index) {
                         slide.classList.add('active');
+                        slide.scrollTop = 0;
                     } else if (i < index) {
                         slide.classList.add('prev');
                     } else {
                         slide.classList.add('next');
                     }
                 });
-
-                // Update button states
                 prevBtn.disabled = index === 0;
                 nextBtn.disabled = index === totalSlides - 1;
-
-                 // Update slide number indicator in the header of the active slide
-                const activeSlideNumber = slides[index].querySelector('.slide-number');
-                 if (activeSlideNumber) {
+                const activeSlide = slides[index];
+                const activeSlideNumber = activeSlide.querySelector('.slide-number');
+                if (activeSlideNumber) {
                     activeSlideNumber.textContent = `${index + 1} / ${totalSlides}`;
-                 }
-
-                // Reset animations for elements within the new active slide
-                const animElements = slides[index].querySelectorAll('.fade-in, .slide-in-up, .slide-in-left, .slide-in-right');
+                }
+                // Reset non-annotation animations
+                const animElements = activeSlide.querySelectorAll('.fade-in:not(.word-span), .slide-in-up:not(.word-span), .slide-in-left:not(.word-span), .slide-in-right:not(.word-span)');
                 animElements.forEach(el => {
-                    const animationClasses = (el.className.match(/(fade-in|slide-in-up|slide-in-left|slide-in-right)/g) || []);
-                    if (animationClasses.length > 0) {
-                        el.classList.remove(...animationClasses);
-                        void el.offsetWidth; // Trigger reflow
-                        setTimeout(() => el.classList.add(...animationClasses), 10); // Re-add after minimal delay
-                    }
-                });
+                     const animationClasses = (el.className.match(/(fade-in|slide-in-up|slide-in-left|slide-in-right)/g) || []);
+                     if (animationClasses.length > 0) {
+                         el.classList.remove(...animationClasses);
+                         void el.offsetWidth;
+                         setTimeout(() => el.classList.add(...animationClasses), 10);
+                     }
+                 });
             }
 
-            // Initialize presentation
+            // --- Annotation Logic ---
+            function toggleHighlighting(forceState = null) {
+                 isHighlightingActive = forceState !== null ? forceState : !isHighlightingActive;
+                document.body.classList.toggle('highlight-mode-active', isHighlightingActive);
+                penBtn.classList.toggle('active', isHighlightingActive);
+                console.log("Highlighting Active:", isHighlightingActive);
+            }
+
+            function clearAllHighlights() {
+                 const highlightedWords = document.querySelectorAll('.word-span.highlighted-word');
+                 highlightedWords.forEach(span => {
+                    span.classList.remove('highlighted-word');
+                 });
+                 console.log("Highlights cleared.");
+            }
+
+             penBtn.addEventListener('click', () => toggleHighlighting());
+             eraserBtn.addEventListener('click', clearAllHighlights);
+
+            presentationContainer.addEventListener('click', function(event) {
+                if (!isHighlightingActive) return;
+                const targetSpan = event.target.closest('.word-span');
+                 if (targetSpan) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    targetSpan.classList.toggle('highlighted-word');
+                 }
+            });
+
+            // --- Initialization ---
+            wrapWordsInSpans();
             showSlide(currentSlide);
 
-            // Next button click handler
+            // --- Navigation Event Listeners ---
             nextBtn.addEventListener('click', function() {
-                if (currentSlide < totalSlides - 1) {
-                    currentSlide++;
-                    showSlide(currentSlide);
-                }
+                if (currentSlide < totalSlides - 1) { currentSlide++; showSlide(currentSlide); }
             });
-
-            // Previous button click handler
             prevBtn.addEventListener('click', function() {
-                if (currentSlide > 0) {
-                    currentSlide--;
-                    showSlide(currentSlide);
-                }
+                if (currentSlide > 0) { currentSlide--; showSlide(currentSlide); }
             });
-
-            // Keyboard navigation
             document.addEventListener('keydown', function(e) {
+                // Allow typing in inputs/textareas
+                if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+
                 if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
-                    e.preventDefault(); // Prevent space bar scrolling
-                    if (!nextBtn.disabled) { // Check if button is enabled
-                       if (currentSlide < totalSlides - 1) {
-                            currentSlide++;
-                            showSlide(currentSlide);
-                        }
+                    if (!nextBtn.disabled) {
+                         e.preventDefault(); currentSlide++; showSlide(currentSlide);
                     }
                 } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
-                    e.preventDefault();
-                     if (!prevBtn.disabled) { // Check if button is enabled
-                        if (currentSlide > 0) {
-                            currentSlide--;
-                            showSlide(currentSlide);
-                        }
-                    }
-                }
+                     if (!prevBtn.disabled) {
+                         e.preventDefault(); currentSlide--; showSlide(currentSlide);
+                     }
+                } else if (e.key.toLowerCase() === 'h' && (e.ctrlKey || e.metaKey)) {
+                     e.preventDefault(); toggleHighlighting();
+                 } else if (e.key === 'Escape' && isHighlightingActive) {
+                     toggleHighlighting(false);
+                 } else if (e.key.toLowerCase() === 'e' && (e.ctrlKey || e.metaKey)) { // Ctrl+E / Cmd+E for eraser
+                      e.preventDefault(); clearAllHighlights();
+                 }
             });
 
-            // Basic Swipe Detection (Optional - for touch devices)
+            // Swipe Detection
             let touchstartX = 0;
-            let touchendX = 0;
-            const presentationContainer = document.querySelector('.presentation-container');
-
-            function handleGesture() {
-                if (touchendX < touchstartX - 50) { // Swiped Left
-                    if (!nextBtn.disabled) {
-                         if (currentSlide < totalSlides - 1) {
-                            currentSlide++;
-                            showSlide(currentSlide);
-                        }
-                    }
-                }
-                if (touchendX > touchstartX + 50) { // Swiped Right
-                     if (!prevBtn.disabled) {
-                        if (currentSlide > 0) {
-                            currentSlide--;
-                            showSlide(currentSlide);
-                        }
-                    }
-                }
-            }
-
-            presentationContainer.addEventListener('touchstart', e => {
-                touchstartX = e.changedTouches[0].screenX;
-            }, { passive: true });
-
+            presentationContainer.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, { passive: true });
             presentationContainer.addEventListener('touchend', e => {
-                touchendX = e.changedTouches[0].screenX;
-                handleGesture();
+                let touchendX = e.changedTouches[0].screenX;
+                if (touchendX < touchstartX - 50 && !nextBtn.disabled) { currentSlide++; showSlide(currentSlide); }
+                if (touchendX > touchstartX + 50 && !prevBtn.disabled) { currentSlide--; showSlide(currentSlide); }
             }, { passive: true });
 
         });
