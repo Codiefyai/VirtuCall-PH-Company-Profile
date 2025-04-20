@@ -1,645 +1,830 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>2025ai</title>
-    <meta content="width=device-width, initial-scale=1" name="viewport">
-    <link href="https://cdn.prod.website-files.com/67ac9fc4120a318b9a03c6f4/css/2025ai.webflow.2fd3081fb.css" rel="stylesheet" type="text/css">
-    <link href="https://cdn.prod.website-files.com/67ac9fc4120a318b9a03c6f4/67acc7b4257e870934ed4c4d_2050_AI-removebg%2032x32.ICO" rel="shortcut icon" type="image/x-icon">
-    <link href="https://cdn.prod.website-files.com/67ac9fc4120a318b9a03c6f4/67acc8207477dad16a96e035_2050_AI-removebg-256x256.png" rel="apple-touch-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scale Smartly with VirtuCall PH | Outsourcing for Growth</title>
+    <!-- Updated Favicon -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png">
     <style>
-        /* General Styles (same as before) */
-        body {
-            font-family: 'Open Sans', sans-serif;
+        :root {
+            /* Updated Color Palette */
+            --primary: #1c1256;   /* Deep Purple/Navy */
+            --secondary: #4c68f3; /* Bright Blue */
+            --accent: #f0f2f5;    /* Very Light Gray/Blue Tint */
+            --success: #11bcf4;   /* Light Cyan/Blue */
+            --dark: #1c1256;      /* Using Primary for Dark Text */
+            --light: #FFFFFF;     /* White */
+            --text-light-secondary: #5a5a7a; /* A slightly lighter version of dark for less emphasis */
+        }
+
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px; /* Base font size for rem units */
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            overflow-x: hidden; /* Prevent horizontal scrollbar during animation */
+            color: var(--dark); /* Default text color */
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem;
-        }
-
-        .button {
-            display: inline-block;
-            background-color: #707AFF;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            text-decoration: none;
-            border-radius: 5px;
-            cursor: pointer; /* Add cursor pointer for buttons */
-        }
-
-        /* Top Bar Styles (same as before) */
-        .top-bar {
-            background-color: #f8f8f8;
-            padding: 1rem 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
             position: relative;
-            z-index: 10;
+            overflow: hidden;
         }
 
-        .top-bar.menu-open {
-            background-color: #333;
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: var(--light); /* White slide background */
+            padding: clamp(20px, 5vw, 40px); /* Responsive padding */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
+            transform: translateX(100%);
+            opacity: 0;
+            z-index: 1;
+            overflow-y: auto;
         }
 
-        .top-bar .container {
+        .slide.active {
+            transform: translateX(0);
+            opacity: 1;
+            z-index: 2;
+        }
+        .slide.prev {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        .slide.next {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+
+        .slide-header {
+            width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 20px;
+            flex-shrink: 0;
         }
 
-        .top-bar-logo img {
-            width: 120px;
-            height: auto;
+        .logo {
+            height: clamp(40px, 7vh, 60px); /* Adjusted logo size */
+            width: auto;
         }
 
-        /* Navigation Menu Styles (same as before) */
-        .nav-menu ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            align-items: center;
+        .slide-number {
+            color: var(--secondary); /* Use secondary blue for contrast */
+            font-weight: bold;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            background-color: var(--accent); /* Light background */
+            padding: 5px 10px;
+            border-radius: 15px;
         }
 
-        .nav-menu li {
-            margin: 0 1rem;
-        }
-
-        .nav-menu a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .nav-menu a:hover {
-            color: #707AFF;
-        }
-
-        .nav-menu details {
-            padding: 0;
-            margin: 0;
-        }
-
-        .nav-menu summary {
-            cursor: pointer;
-            display: block;
-            padding: 0.75rem 0;
-            transition: color 0.3s ease;
-            color: #333;
-        }
-
-        .nav-menu summary:hover {
-            color: #707AFF;
-        }
-
-        .nav-menu details>ul {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            padding: 0.5rem;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            z-index: 10;
-        }
-
-        .nav-menu details[open]>ul {
-            display: block;
-        }
-
-        .nav-menu ul ul li {
-            margin: 0;
-            padding: 0.25rem 0;
-        }
-
-        .nav-menu ul ul a {
-            display: block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 3px;
-        }
-
-        /* Theme Toggle Styles (same as before) */
-        .theme-toggle {
-            display: flex;
-            align-items: center;
-            margin-left: 2rem;
-        }
-
-        .theme-toggle label {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
-
-        .theme-toggle .toggleThemeIcon {
-            position: relative;
-            margin: auto;
-            cursor: pointer;
-            height: 1.6rem;
-            background-color: #E8E8E8;
-            transition: .4s;
-            border-radius: 8rem;
-            width: 3rem;
-            padding: .2rem;
-        }
-
-        .theme-toggle .toggleThemeIcon:before {
-            position: absolute;
-            content: '';
-            height: 1.2rem;
-            width: 1.2rem;
-            background-color: #FFFFFF;
-            text-align: center;
-            transition: .4s;
-            border-radius: 4rem;
-            box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='19' height='19' fill='none' viewBox='0 0 32 32'%3E%3Cpath fill='%23707AFF' d='M16 4a1.714 1.714 0 110 3.429A1.714 1.714 0 0116 4zM24.485 7.515a1.714 1.714 0 11-2.424 2.424 1.714 1.714 0 012.424-2.424zM7.429 16A1.714 1.714 0 104 16a1.714 1.714 0 003.429 0zM26.286 14.286a1.714 1.714 0 110 3.428 1.714 1.714 0 010-3.428zM9.94 24.485a1.714 1.714 0 10-2.425-2.424 1.714 1.714 0 002.424 2.424zM24.485 22.06a1.714 1.714 0 11-2.424 2.425 1.714 1.714 0 012.424-2.424zM16 24.571A1.714 1.714 0 1116 28a1.714 1.714 0 010-3.429zM9.94 7.515a1.714 1.714 0 4 1.714 0 10-2.425 2.424 1.714 1.714 0 002.424-2.424zM22 16a6 6 0 11-12 0 6 6 0 0112 0z'/%3E%3C/svg%3E%0A");
-        }
-
-        input:checked + .theme-toggle .toggleThemeIcon {
-            background-color: #4ab8ff;
-        }
-
-        input:checked + .theme-toggle .toggleThemeIcon:before {
-            content: '';
-            transform: translateX(calc(2.8rem - 1.2rem - 0.2rem));
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='19' height='19' fill='none' viewBox='0 0 32 32'%3E%3Cpath fill='%23707AFF' d='M25.955 16.163a8 8 0 01-10.91-10.91C9.97 5.732 6 10.005 6 15.206c0 5.523 4.477 10 10 10 5.2 0 9.474-3.97 9.955-9.044z'/%3E%3C/svg%3E%0A");
-        }
-
-        #toggleTheme {
-            display: none;
-        }
-
-        /* Hero Section Styles (same as before) */
-        .hero {
-            padding: 4rem 0;
-            text-align: center;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        /* Featured Tools Styles (same as before) */
-        .featured-tools {
-            padding: 2rem 0;
-        }
-
-        .featured-tools h2 {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Call to Action Styles (same as before) */
-        .call-to-action {
-            background-color: #f0f0f0;
-            padding: 3rem 0;
-            text-align: center;
-        }
-
-        /* Footer Styles (same as before) */
-        .footer {
-            background-color: #333;
-            color: white;
-            padding: 2rem 0;
-            text-align: center;
-        }
-
-        /* Dark Mode Styles (same as before) */
-        body.dark-mode {
-            background-color: #171717;
-            color: #ffffff;
-        }
-
-        body.dark-mode a {
-            color: #ffffff;
-        }
-
-        body.dark-mode a.w--current {
-            color: #707AFF;
-        }
-
-        body.dark-mode path {
-            fill: #ffffff;
-        }
-
-        body.dark-mode .submit-main .div-block-11 .rich-text-block-10 {
-            background-color: #ffffff;
-            color: #000000;
-        }
-
-        body.dark-mode .footer-subscribe {
-            fill: #ffffff;
-        }
-
-        body.dark-mode .tool-item-columns-new {
-            background-color: #2b2b2b;
-        }
-
-        body.dark-mode .dropdown-toggle-2 {
-            color: #ffffff;
-        }
-
-        body.dark-mode .footer-copyright {
-            color: #ffffff;
-        }
-
-        body.dark-mode .columns-6 {
-            background-color: #999999;
-        }
-
-        body.dark-mode .text-block-55 {
-            color: #ffffff;
-        }
-
-        body.dark-mode .thank-you-link {
-            color: #a0a0a0;
-        }
-
-        body.dark-mode .collection-item-6 {
-            background-color: #2b2b2b;
-        }
-
-        body.dark-mode .white-cover {
-            color: #ffffff;
-        }
-
-        body.dark-mode .white-text-dm {
-            color: #ffffff;
-            opacity: 0.8;
-        }
-
-        body.dark-mode .white-text-db-gc {
-            color: #ffffff;
-            opacity: 0.8;
-        }
-
-        body.dark-mode .black-text-db-gc {
-            color: #000000;
-        }
-
-        body.dark-mode .footer-social-link-three-path {
-            color: #ffffff;
-        }
-
-        body.dark-mode .blue-text-dm {
-            color: #0f89f3;
-        }
-
-        /* Mobile Menu Styles (same as before) */
-        .menu-button {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #333;
-            cursor: pointer;
-            display: none;
-        }
-
-        .menu-button:focus {
-            outline: none;
-        }
-
-        .nav-menu {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
+        .slide-content {
             width: 100%;
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            padding: 1rem;
-            text-align: center;
-            z-index: 5;
-        }
-
-        .nav-menu.show {
-            display: block;
-        }
-
-        .menu-button i {
-            font-size: 24px;
-        }
-
-        /* Media Queries (same as before) */
-        @media (max-width: 768px) {
-            .top-bar .container {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .nav-menu {
-                position: static;
-                display: none;
-                width: 100%;
-                padding: 0;
-                box-shadow: none;
-                text-align: left;
-            }
-
-            .nav-menu ul {
-                flex-direction: column;
-            }
-
-            .nav-menu li {
-                margin: 0.5rem 0;
-            }
-
-            .menu-button {
-                display: block;
-                position: absolute;
-                top: 1rem;
-                right: 1rem;
-            }
-        }
-
-        /* ---------------------------------- */
-        /* --- New Loading Screen Styles --- */
-        /* ---------------------------------- */
-        #loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #f8f8f8; /* Match top-bar background */
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 1000; /* Ensure it's on top */
+            text-align: center;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding-bottom: 80px;
         }
 
-        #loading-bar-container {
-            width: 200px; /* Adjust as needed */
-            height: 20px;
-            background-color: #ddd;
+        h1 {
+            color: var(--primary); /* Main dark color */
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: var(--secondary); /* Bright blue for secondary headers */
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            margin-bottom: 1.2rem;
+            font-weight: 600;
+        }
+
+        p {
+            color: var(--dark);
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            line-height: 1.7;
+            margin-bottom: 1.2rem;
+            max-width: 800px;
+        }
+        p.subtle {
+            color: var(--text-light-secondary); /* Softer color for less important text */
+        }
+
+        ul {
+            text-align: left;
+            max-width: 700px;
+            margin: 0 auto 1.5rem;
+            padding-left: 20px;
+            list-style: none;
+        }
+
+        li {
+            color: var(--dark);
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            line-height: 1.7;
+            margin-bottom: 0.8rem;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        li::before {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: var(--success); /* Light cyan blue for checkmarks */
+            position: absolute;
+            left: 0;
+            top: 4px;
+        }
+
+        .highlight-box {
+            background-color: var(--accent); /* Light accent background */
+            border-left: 5px solid var(--secondary); /* Bright blue border */
+            padding: clamp(15px, 3vw, 25px);
+            margin: 1.5rem 0;
+            text-align: left;
+            max-width: 800px;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .highlight-box h3 {
+            color: var(--primary); /* Dark primary color for heading */
+            margin-bottom: 0.8rem;
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+        }
+
+        .btn {
+            background-color: var(--secondary); /* Bright blue button */
+            color: var(--light); /* White text */
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        .btn:hover, .btn:focus {
+            background-color: var(--primary); /* Dark primary on hover */
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(28, 18, 86, 0.2); /* Shadow matching primary */
+            outline: none;
+        }
+
+        .nav-buttons {
+            position: fixed;
+            bottom: clamp(15px, 3vh, 25px);
+            right: clamp(15px, 3vw, 25px);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            width: clamp(40px, 8vw, 50px);
+            height: clamp(40px, 8vw, 50px);
+            border-radius: 50%;
+            background-color: var(--primary); /* Dark primary background */
+            color: var(--light); /* White icon */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 3px 10px rgba(28, 18, 86, 0.25);
+        }
+
+        .nav-btn:hover, .nav-btn:focus {
+            background-color: var(--secondary); /* Bright blue on hover */
+            transform: scale(1.1);
+            outline: none;
+        }
+        .nav-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            color: #888888;
+        }
+
+        .image-container {
+            max-width: 90%;
+            width: 500px;
+            margin: 1.5rem auto;
             border-radius: 10px;
             overflow: hidden;
-            position: relative; /* For robot positioning */
+            box-shadow: 0 8px 25px rgba(28, 18, 86, 0.1); /* Subtle shadow */
+            transition: all 0.3s ease;
         }
 
-        #loading-bar {
-            width: 0%;
-            height: 100%;
-            background-color: #707AFF;
-            border-radius: 10px;
-            transition: width 0.1s ease; /* Smooth loading bar animation */
+        .image-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(28, 18, 86, 0.15);
         }
 
-        #robot-container {
-            position: absolute;
-            left: 0; /* Start at the beginning */
-            top: -35px; /* Position above the loading bar */
-            width: 40px; /* Adjust robot container width */
-            height: 40px; /* Adjust robot container height */
-            overflow: hidden; /* Clip robot if needed */
-        }
-
-        #robot-image {
-            width: 40px; /* Robot image width */
-            height: auto; /* Keep aspect ratio */
+        .image-container img {
+            width: 100%;
+            height: auto;
             display: block;
-            animation: march 1s steps(2) infinite; /* Robot marching animation (adjust steps based on your robot sprite) */
-            transform: translateX(0%); /* Initial robot position */
-            transition: transform 0.1s linear; /* Sync robot movement with loading bar */
+            object-fit: cover;
         }
 
-        @keyframes march {
-            from { transform: translateX(0); }
-            to { transform: translateX(-100%); } /* Adjust if your sprite sheet is different */
+        /* Grid Layout for Cards/Stats */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: clamp(15px, 3vw, 25px);
+            width: 100%;
+            max-width: 1000px;
+            margin: 1.5rem 0;
         }
 
-
-        /* ---------------------------------- */
-        /* ----- New About Section Styles ----- */
-        /* ---------------------------------- */
-        #about-section {
-            display: none; /* Hidden initially */
-            padding: 4rem 0;
-            text-align: center;
+        .card {
+            background: var(--light); /* White card background */
+            border-radius: 10px;
+            padding: clamp(20px, 4vw, 30px);
+            box-shadow: 0 5px 15px rgba(28, 18, 86, 0.05); /* Subtle shadow */
+            border-top: 5px solid var(--primary); /* Dark primary top border */
+            transition: all 0.3s ease;
+            text-align: left;
         }
 
-        #about-section .container {
-            max-width: 800px; /* Narrower container for text */
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(28, 18, 86, 0.1);
+            border-top-color: var(--secondary); /* Bright blue border on hover */
         }
 
-        #about-section h2 {
-            font-size: 2.5rem;
+        .card h3 {
+            color: var(--primary);
             margin-bottom: 1rem;
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
         }
 
-        #about-section p {
-            margin-bottom: 1.5rem;
-            color: #555;
+        /* Comparison Table */
+        .comparison-table-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 1.5rem auto;
+            overflow-x: auto;
+            border: 1px solid #e0e0e0; /* Add subtle border */
+            border-radius: 8px;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 500px;
         }
 
-        /* ---------------------------------- */
-        /* ----- Main Content Section Styles ----- */
-        /* ---------------------------------- */
-        #main-content {
-            display: none; /* Hidden initially, shown after "Get Started" */
+        .comparison-table th, .comparison-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+        }
+        .comparison-table tr:last-child td {
+             border-bottom: none; /* Remove border on last row */
         }
 
+        .comparison-table th {
+            background-color: var(--primary); /* Dark primary header */
+            color: var(--light); /* White text */
+            font-weight: 600;
+        }
+        .comparison-table th:first-child { border-top-left-radius: 7px; } /* Rounded corners */
+        .comparison-table th:last-child { border-top-right-radius: 7px; }
+
+        .comparison-table tr:nth-child(even) td {
+            background-color: var(--accent); /* Light accent for even rows */
+        }
+
+        .comparison-table tr:hover td {
+            background-color: #e4e8f7; /* Slightly darker blue tint on hover */
+        }
+
+        .check-icon { color: var(--success); font-weight: bold; font-size: 1.1em; } /* Cyan check */
+        .cross-icon { color: #dc3545; font-weight: bold; }
+        .table-center { text-align: center; vertical-align: middle;}
+
+        /* Two Column Layout */
+        .two-column {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 1100px;
+            gap: clamp(20px, 4vw, 40px);
+            align-items: center;
+            margin: 1.5rem 0;
+        }
+
+        .column {
+            flex: 1 1 300px;
+            min-width: 280px;
+        }
+
+        .column.text-column {
+             text-align: left;
+        }
+
+        /* General Utility Classes */
+        .text-primary { color: var(--primary); }
+        .text-secondary { color: var(--secondary); }
+        .text-success { color: var(--success); }
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .margin-top-large { margin-top: 2rem; }
+        .font-weight-bold { font-weight: bold; }
+
+        /* Contact Icons Styling */
+        .contact-info p { margin-bottom: 0.8rem; }
+        .contact-info .fas {
+             color: var(--secondary); /* Bright blue icons */
+             margin-right: 10px;
+             width: 20px; /* Ensure alignment */
+             text-align: center;
+        }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.7s ease-in-out forwards; }
+        .slide-in-up { animation: slideInUp 0.7s ease-in-out forwards; }
+        .slide-in-left { animation: slideInLeft 0.7s ease-in-out forwards; }
+        .slide-in-right { animation: slideInRight 0.7s ease-in-out forwards; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideInUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideInLeft { from { transform: translateX(-30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideInRight { from { transform: translateX(30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        @media (max-width: 768px) {
+             .slide-content { padding-bottom: 100px; }
+             .two-column { flex-direction: column; }
+             .column { flex-basis: auto; width: 100%; }
+             .comparison-table-container { border-radius: 0; border-left: none; border-right: none;} /* Adjust table border on mobile */
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.6rem; }
+            h2 { font-size: 1.3rem; }
+            p, li { font-size: 0.9rem; }
+            .btn { padding: 10px 20px; }
+        }
 
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <div class="presentation-container">
 
-    <!-- Loading Screen -->
-    <div id="loading-screen">
-        <h1>Loading AI Tools...</h1>
-        <div id="loading-bar-container">
-            <div id="loading-bar"></div>
-            <div id="robot-container">
-                <img id="robot-image" src="https://i.imgur.com/7pvpcpV.png" alt="Marching Robot">
-                <!-- Replace with your robot image -->
+        <!-- Slide 1: Title Slide -->
+        <div class="slide active" id="slide1">
+            <div class="slide-header">
+                <!-- Updated Logo -->
+                <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
+                <div class="slide-number">1 / 8</div>
             </div>
+            <div class="slide-content">
+                <h1 class="fade-in">Scale Your Business Smarter, Not Harder</h1>
+                <p class="fade-in subtle" style="animation-delay: 0.2s;">Unlock Growth Potential with Expert Outsourcing Solutions from VirtuCall PH</p>
+                <div class="image-container slide-in-up" style="animation-delay: 0.4s;">
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMDkyMnwwfDF8c2VhcmNofDF8fHRlYW0lMjBjb2xsYWJvcmF0aW9ufGVufDB8fHx8MTY4MjYxMzI0OA&ixlib=rb-4.0.3&q=80&w=1080" alt="Diverse team collaborating effectively">
+                </div>
+                 <p class="text-secondary fade-in font-weight-bold" style="animation-delay: 0.6s;">Focus on your core mission. Let us handle the rest.</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: The Growth Challenge -->
+        <div class="slide" id="slide2">
+            <div class="slide-header">
+                <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
+                <div class="slide-number">2 / 8</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="slide-in-left">The Scaling Dilemma: Growing Pains are Real</h2>
+                <p class="fade-in subtle" style="animation-delay: 0.2s;">Rapid growth is exciting, but it brings significant operational challenges that can slow you down.</p>
+
+                <div class="grid-layout">
+                    <div class="card fade-in" style="animation-delay: 0.4s;">
+                        <h3>Resource Strain</h3>
+                        <p>Finding, hiring, and training new staff quickly is costly and time-consuming, diverting focus from core activities.</p>
+                    </div>
+                    <div class="card fade-in" style="animation-delay: 0.5s;">
+                        <h3>Rising Overhead</h3>
+                        <p>Expanding in-house teams means more office space, equipment, management layers, and administrative burden.</p>
+                    </div>
+                    <div class="card fade-in" style="animation-delay: 0.6s;">
+                        <h3>Maintaining Quality</h3>
+                        <p>Ensuring consistent service quality and operational efficiency becomes harder as complexity increases.</p>
+                    </div>
+                     <div class="card fade-in" style="animation-delay: 0.7s;">
+                        <h3>Scalability Hurdles</h3>
+                        <p>Scaling operations up (or down) quickly to meet fluctuating demand is difficult with fixed in-house structures.</p>
+                    </div>
+                </div>
+                 <p class="text-primary fade-in font-weight-bold" style="animation-delay: 0.8s;">Is your operational capacity keeping pace with your ambition?</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: Introducing Outsourcing -->
+        <div class="slide" id="slide3">
+            <div class="slide-header">
+                <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
+                <div class="slide-number">3 / 8</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="slide-in-left">The Strategic Advantage: Smart Outsourcing</h2>
+                 <p class="fade-in subtle" style="animation-delay: 0.2s;">Forward-thinking businesses leverage outsourcing not just for cost savings, but as a powerful tool for strategic growth.</p>
+
+                <div class="two-column margin-top-large">
+                     <div class="column slide-in-left" style="animation-delay: 0.4s;">
+                        <div class="image-container">
+                            <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMDkyMnwwfDF8c2VhcmNofDR8fGJ1c2luZXNzJTIwcGFydG5lcnNoaXB8ZW58MHx8fHwxNjgyNjE0MjYz&ixlib=rb-4.0.3&q=80&w=1080" alt="Business partners collaborating">
+                        </div>
+                    </div>
+                    <div class="column text-column slide-in-right" style="animation-delay: 0.6s;">
+                        <h3 class="text-primary">Why Growing Businesses Outsource:</h3>
+                        <ul>
+                            <li><strong>Access Expertise Instantly:</strong> Tap into specialized skills without lengthy recruitment cycles.</li>
+                            <li><strong>Enhance Scalability:</strong> Easily adjust operational capacity to match demand.</li>
+                            <li><strong>Sharpen Core Focus:</strong> Free up internal resources to concentrate on innovation and strategy.</li>
+                            <li><strong>Improve Efficiency:</strong> Benefit from optimized processes and experienced teams.</li>
+                             <li><strong>Accelerate Speed-to-Market:</strong> Launch new services or support functions faster.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: In-House vs. Outsource -->
+        <div class="slide" id="slide4">
+            <div class="slide-header">
+                <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
+                <div class="slide-number">4 / 8</div>
+            </div>
+            <div class="slide-content">
+                 <h2 class="slide-in-left">In-House Hiring vs. Strategic Outsourcing</h2>
+                <p class="fade-in subtle" style="animation-delay: 0.2s;">Let's compare the true implications of building internally versus partnering with an expert.</p>
+
+                <div class="comparison-table-container fade-in" style="animation-delay: 0.4s;">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Factor</th>
+                                <th>In-House Team</th>
+                                <th>Outsourcing (VirtuCall PH)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Recruitment & Hiring</td>
+                                <td>Weeks/Months, High Cost</td>
+                                <td class="table-center"><i class="fas fa-check check-icon"></i> Handled by Partner</td>
+                            </tr>
+                             <tr>
+                                <td>Training & Onboarding</td>
+                                <td>Significant Time & Resource Investment</td>
+                                <td class="table-center"><i class="fas fa-check check-icon"></i> Specialized & Included</td>
+                            </tr>
+                            <tr>
+                                <td>Salaries & Benefits</td>
+                                <td>Full Burden + Hidden Costs (~30%)</td>
+                                <td class="table-center"><i class="fas fa-check check-icon"></i> Predictable, Lower Cost</td>
+                            </tr>
+                             <tr>
+                                <td>Infrastructure & Tools</td>
+                                <td>Requires Capital Expenditure (Office, IT)</td>
+                                <td class="table-center"><i class="fas fa-check check-icon"></i> Included in Service</td>
+                            </tr>
+                            <tr>
+                                <td>Management Overhead</td>
+                                <td>Requires Dedicated Supervision</td>
+                                 <td class="table-center"><i class="fas fa-check check-icon"></i> Included Account Management</td>
+                            </tr>
+                            <tr>
+                                <td>Scalability</td>
+                                <td>Slow, Inflexible</td>
+                                <td class="table-center"><i class="fas fa-check check-icon"></i> Fast, On-Demand</td>
+                            </tr>
+                            <tr>
+                                <td>Focus</td>
+                                <td>Diluted by Operational Tasks</td>
+                                <td class="table-center"><i class="fas fa-check check-icon"></i> Enables Core Business Focus</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                 <p class="fade-in margin-top-large subtle" style="animation-delay: 0.6s;">Outsourcing transforms fixed overheads into variable, predictable costs, directly tied to your needs.</p>
+            </div>
+        </div>
+
+        <!-- Slide 5: Why VirtuCall PH - Cost Efficiency -->
+        <div class="slide" id="slide5">
+            <div class="slide-header">
+                <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
+                 <div class="slide-number">5 / 8</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="slide-in-left">The VirtuCall PH Advantage: Unbeatable Cost-Efficiency</h2>
+                <p class="fade-in subtle" style="animation-delay: 0.2s;">We deliver exceptional value by combining talent, technology, and optimized processes – without sacrificing quality.</p>
+
+                 <div class="two-column margin-top-large">
+                    <div class="column text-column slide-in-left" style="animation-delay: 0.4s;">
+                         <h3 class="text-primary">How We Make Outsourcing Highly Cost-Effective:</h3>
+                        <ul>
+                            <li><strong>Access to Global Talent Pool:</strong> Leverage skilled professionals in the Philippines at competitive rates.</li>
+                            <li><strong>Streamlined Operations:</strong> Optimized workflows and efficient management reduce overhead.</li>
+                            <li><strong>Technology Leverage:</strong> Utilizing advanced tools enhances productivity and lowers operational costs.</li>
+                             <li><strong>Reduced Infrastructure Needs:</strong> We handle the office space, IT, and utilities – you don't have to.</li>
+                            <li><strong>Scalable Pricing Models:</strong> Pay for the capacity you need, when you need it.</li>
+                        </ul>
+                        <div class="highlight-box fade-in" style="animation-delay: 0.8s;">
+                           <h3 class="text-center"><span class="text-secondary font-weight-bold">Typical Savings: 40-60%</span></h3>
+                           <p class="text-center subtle">Clients often see significant cost reductions compared to building and managing an equivalent in-house team, freeing up capital for growth initiatives.</p>
+                        </div>
+                    </div>
+                     <div class="column slide-in-right" style="animation-delay: 0.6s;">
+                        <div class="image-container">
+                             <img src="https://images.unsplash.com/photo-1579621970795-87facc2f976d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMDkyMnwwfDF8c2VhcmNofDEwfHxjb3N0JTIwc2F2aW5nfGVufDB8fHx8MTY4MjYxNTUwOQ&ixlib=rb-4.0.3&q=80&w=1080" alt="Visual representation of cost savings">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Quality & Expertise -->
+        <div class="slide" id="slide6">
+             <div class="slide-header">
+                <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
+                <div class="slide-number">6 / 8</div>
+            </div>
+            <div class="slide-content">
+                 <h2 class="slide-in-left">Beyond Cost: Our Commitment to Quality & Expertise</h2>
+                 <p class="fade-in subtle" style="animation-delay: 0.2s;">Cost efficiency means little without reliable performance. We ensure your outsourced functions operate seamlessly and effectively.</p>
+
+                <div class="grid-layout">
+                     <div class="card fade-in" style="animation-delay: 0.4s;">
+                        <h3>Rigorous Training</h3>
+                        <p>Our teams undergo comprehensive training specific to your industry, brand voice, and operational requirements.</p>
+                    </div>
+                    <div class="card fade-in" style="animation-delay: 0.5s;">
+                        <h3>Quality Assurance</h3>
+                        <p>Continuous monitoring, performance metrics, and feedback loops ensure high standards are always met.</p>
+                    </div>
+                     <div class="card fade-in" style="animation-delay: 0.6s;">
+                        <h3>Dedicated Teams</h3>
+                         <p>We provide dedicated agents and account managers who become extensions of your own team.</p>
+                    </div>
+                    <div class="card fade-in" style="animation-delay: 0.7s;">
+                         <h3>Transparent Reporting</h3>
+                        <p>Gain full visibility into performance with regular, detailed reports and insights.</p>
+                    </div>
+                </div>
+                 <div class="highlight-box fade-in text-center" style="animation-delay: 0.8s; max-width: 700px; margin: 1.5rem auto;">
+                     <p class="text-secondary font-weight-bold">We act as a true partner, invested in your success and representing your brand professionally.</p>
+                </div>
+            </div>
+        </div>
+
+         <!-- Slide 7: Our Simple Process -->
+        <div class="slide" id="slide7">
+            <div class="slide-header">
+                <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
+                <div class="slide-number">7 / 8</div>
+            </div>
+            <div class="slide-content">
+                 <h2 class="slide-in-left">Getting Started: A Seamless Transition</h2>
+                <p class="fade-in subtle" style="animation-delay: 0.2s;">Our structured onboarding process makes partnering with VirtuCall PH straightforward and efficient.</p>
+
+                 <div class="two-column margin-top-large">
+                     <div class="column slide-in-left" style="animation-delay: 0.4s;">
+                         <div class="image-container">
+                            <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMDkyMnwwfDF8c2VhcmNofDJ8fHBsYW5uaW5nJTIwc2Vzc2lvbnxlbnwwfHx8fDE2ODI2MTY0MzA&ixlib=rb-4.0.3&q=80&w=1080" alt="Team planning session">
+                        </div>
+                    </div>
+                     <div class="column text-column slide-in-right" style="animation-delay: 0.6s;">
+                        <h3 class="text-primary">Our 4-Step Process:</h3>
+                        <!-- Using custom styled steps instead of default list -->
+                        <div style="text-align: left; margin-top: 1rem;">
+                            <div style="display: flex; align-items: flex-start; margin-bottom: 1rem;">
+                                <span style="background-color: var(--secondary); color: white; border-radius: 50%; width: 25px; height: 25px; display: inline-flex; justify-content: center; align-items: center; font-weight: bold; margin-right: 15px; flex-shrink: 0;">1</span>
+                                <div><strong>Discovery & Strategy:</strong> We deeply understand your goals, processes, and requirements.</div>
+                            </div>
+                             <div style="display: flex; align-items: flex-start; margin-bottom: 1rem;">
+                                <span style="background-color: var(--secondary); color: white; border-radius: 50%; width: 25px; height: 25px; display: inline-flex; justify-content: center; align-items: center; font-weight: bold; margin-right: 15px; flex-shrink: 0;">2</span>
+                                <div><strong>Custom Solution Design:</strong> We tailor our services, team structure, and workflows to your needs.</div>
+                            </div>
+                             <div style="display: flex; align-items: flex-start; margin-bottom: 1rem;">
+                                <span style="background-color: var(--secondary); color: white; border-radius: 50%; width: 25px; height: 25px; display: inline-flex; justify-content: center; align-items: center; font-weight: bold; margin-right: 15px; flex-shrink: 0;">3</span>
+                                <div><strong>Implementation & Training:</strong> We set up systems, train the dedicated team, and integrate seamlessly.</div>
+                            </div>
+                             <div style="display: flex; align-items: flex-start; margin-bottom: 1rem;">
+                                <span style="background-color: var(--secondary); color: white; border-radius: 50%; width: 25px; height: 25px; display: inline-flex; justify-content: center; align-items: center; font-weight: bold; margin-right: 15px; flex-shrink: 0;">4</span>
+                                <div><strong>Launch & Optimize:</strong> Go live with continuous monitoring, reporting, and performance optimization.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <p class="fade-in margin-top-large subtle" style="animation-delay: 0.8s;">We manage the transition so you can focus on the results.</p>
+            </div>
+        </div>
+
+        <!-- Slide 8: Call to Action -->
+        <div class="slide" id="slide8">
+            <div class="slide-header">
+                 <img src="https://i.ibb.co/67gPjyKt/Virtu-Call-favicon.png" alt="VirtuCall PH Logo" class="logo">
+                <div class="slide-number">8 / 8</div>
+            </div>
+            <div class="slide-content">
+                <h2 class="slide-in-left">Ready to Scale Smarter?</h2>
+                <p class="fade-in subtle" style="animation-delay: 0.2s;">Discover how VirtuCall PH can provide the cost-effective, high-quality outsourcing solution your growing business needs.</p>
+
+                 <div class="two-column margin-top-large">
+                    <div class="column text-column slide-in-left" style="animation-delay: 0.4s;">
+                         <h3 class="text-primary">Let's Discuss Your Needs:</h3>
+                        <p class="subtle">Schedule a free, no-obligation consultation to explore how we can help you:</p>
+                        <ul>
+                            <li>Reduce operational costs significantly</li>
+                            <li>Improve efficiency and productivity</li>
+                            <li>Scale your operations flexibly</li>
+                            <li>Focus on your core business growth</li>
+                        </ul>
+                        <a href="mailto:flynnvcph@nitchiebotai.online" class="btn fade-in" style="animation-delay: 0.8s;">Schedule Your Consultation</a>
+                     </div>
+                    <div class="column slide-in-right" style="animation-delay: 0.6s;">
+                        <div class="highlight-box contact-info">
+                             <h3 class="text-center text-primary">Contact Us</h3>
+                            <div style="text-align: left; margin-top: 1rem; padding-left: 20px;">
+                                <p><i class="fas fa-envelope"></i> flynnvcph@nitchiebotai.online</p>
+                                <p><i class="fas fa-phone"></i> +1 (267) 478-1798</p>
+                                <p><i class="fas fa-globe"></i> www.virtucallph.com (Example)</p>
+                            </div>
+                        </div>
+                         <div class="image-container" style="margin-top: 1.5rem;">
+                            <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMDkyMnwwfDF8c2VhcmNofDN8fG1lZXRpbmd8ZW58MHx8fHwxNjgyNjE3MDUw&ixlib=rb-4.0.3&q=80&w=1080" alt="Business meeting handshake">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="nav-buttons">
+            <button class="nav-btn" id="prev-btn" aria-label="Previous Slide"><i class="fas fa-arrow-left"></i></button>
+            <button class="nav-btn" id="next-btn" aria-label="Next Slide"><i class="fas fa-arrow-right"></i></button>
         </div>
     </div>
 
-    <!-- About Section -->
-    <section id="about-section">
-        <div class="container">
-            <h2>Welcome to 2025AI</h2>
-            <p>Discover and explore the best AI tools available to enhance your productivity and creativity. Our curated list helps you navigate the world of artificial intelligence and find the perfect tools for your needs.</p>
-
-            <h3>User Guide</h3>
-            <p><strong>How to use 2025AI:</strong></p>
-            <ol style="list-style-type: decimal; text-align: left; margin: 0 auto; max-width: 600px;">
-                <li><strong>Explore Tools:</strong> Browse our categories or use the search function to find AI tools.</li>
-                <li><strong>Read Descriptions:</strong> Each tool comes with a brief description to help you understand its purpose.</li>
-                <li><strong>Visit Website:</strong> Click on a tool to visit its official website and learn more or start using it.</li>
-                <li><strong>Stay Updated:</strong> Check the "Added Today" section for the latest AI tools.</li>
-            </ol>
-
-            <button id="get-started-button" class="button">Get Started</button>
-        </div>
-    </section>
-
-    <!-- Main Content (Initially Hidden) -->
-    <div id="main-content">
-        <header id="top-bar" class="top-bar">
-            <div class="container">
-                <div id="logo" class="top-bar-logo">
-                    <a href="/">
-                        <img src="https://i.ibb.co/2195hnn4/2050-AI-removebg-preview.png" alt="2050 AI" title="2050 AI">
-                    </a>
-                </div>
-                <button aria-label="Toggle Menu" class="menu-button">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <nav class="nav-menu">
-                    <ul>
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/newly-added">Added Today</a></li>
-                        <li><a href="/news">AI News</a></li>
-                        <li><a href="/learn">Videos</a></li>
-                        <li>
-                            <details>
-                                <summary>Help</summary>
-                                <ul>
-                                    <li><a href="/glossary">Glossary</a></li>
-                                    <li><a href="/faq">FAQ</a></li>
-                                    <li><a href="/submit-a-tool">Submit a Tool</a></li>
-                                </ul>
-                            </details>
-                        </li>
-                    </ul>
-                </nav>
-                <div class="theme-toggle">
-                    <label for="toggleTheme">
-                        <input type="checkbox" id="toggleTheme">
-                        <span class="togglethemeicon"></span>
-                    </label>
-                </div>
-            </div>
-        </header>
-
-        <main>
-            <section class="hero">
-                <div class="container">
-                    <h1>Explore the Future with AI Tools</h1>
-                    <p>Discover the best AI tools to boost your productivity and unlock new possibilities.</p>
-                </div>
-            </section>
-
-            <section class="featured-tools">
-                <div class="container">
-                    <h2>Featured AI Tools</h2>
-                    <!-- Add your featured tools content here -->
-                </div>
-            </section>
-
-            <section class="call-to-action">
-                <div class="container">
-                    <p>Ready to find the perfect AI tool for your needs?</p>
-                    <a href="https://two050ai-toolss.onrender.com/" class="button">Discover Your AI</a>
-                </div>
-            </section>
-        </main>
-
-        <footer class="footer">
-            <div class="container">
-                <p>© 2024 2050AI. All rights reserved.</p>
-            </div>
-        </footer>
-    </div>
-
-
+    <!-- Same Javascript as before -->
     <script>
-        (function() {
-            // Theme Toggle (same as before)
-            function setThemeFromCookie() {
-                if (document.cookie.match(/theme=dark/i)) {
-                    document.body.classList.add('dark-mode');
-                } else {
-                    document.body.classList.remove('dark-mode');
-                }
-            }
+        document.addEventListener('DOMContentLoaded', function() {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            let currentSlide = 0;
+            const totalSlides = slides.length;
 
-            function setThemeSwitchState() {
-                document.getElementById('toggleTheme').checked = document.cookie.match(/theme=dark/i) != null;
-            }
+            // Function to update slide visibility and classes
+            function showSlide(index) {
+                slides.forEach((slide, i) => {
+                    slide.classList.remove('active', 'prev', 'next');
+                    if (i === index) {
+                        slide.classList.add('active');
+                    } else if (i < index) {
+                        slide.classList.add('prev');
+                    } else {
+                        slide.classList.add('next');
+                    }
+                });
 
-            function toggleTheme() {
-                if (document.body.classList.contains('dark-mode')) {
-                    document.body.classList.remove('dark-mode');
-                    document.cookie = 'theme=light';
-                } else {
-                    document.body.classList.add('dark-mode');
-                    document.cookie = 'theme=dark';
-                }
-            }
+                // Update button states
+                prevBtn.disabled = index === 0;
+                nextBtn.disabled = index === totalSlides - 1;
 
-            // Initialize Theme
-            setThemeFromCookie();
-            setThemeSwitchState();
-            document.getElementById('toggleTheme').addEventListener('change', toggleTheme);
+                 // Update slide number indicator in the header of the active slide
+                const activeSlideNumber = slides[index].querySelector('.slide-number');
+                 if (activeSlideNumber) {
+                    activeSlideNumber.textContent = `${index + 1} / ${totalSlides}`;
+                 }
 
-            // Centralized Menu Toggle (same as before)
-            const menuButton = document.querySelector('.menu-button');
-            const navMenu = document.querySelector('.nav-menu');
-            const topBar = document.getElementById('top-bar');
-
-            if (menuButton && navMenu) {
-                menuButton.addEventListener('click', () => {
-                    navMenu.classList.toggle('show');
-                    topBar.classList.toggle('menu-open');
+                // Reset animations for elements within the new active slide
+                const animElements = slides[index].querySelectorAll('.fade-in, .slide-in-up, .slide-in-left, .slide-in-right');
+                animElements.forEach(el => {
+                    const animationClasses = (el.className.match(/(fade-in|slide-in-up|slide-in-left|slide-in-right)/g) || []);
+                    if (animationClasses.length > 0) {
+                        el.classList.remove(...animationClasses);
+                        void el.offsetWidth; // Trigger reflow
+                        setTimeout(() => el.classList.add(...animationClasses), 10); // Re-add after minimal delay
+                    }
                 });
             }
 
-            document.addEventListener('click', (event) => {
-                if (menuButton && navMenu && !menuButton.contains(event.target) && !navMenu.contains(event.target) && navMenu.classList.contains('show')) {
-                    navMenu.classList.remove('show');
-                    topBar.classList.remove('menu-open');
+            // Initialize presentation
+            showSlide(currentSlide);
+
+            // Next button click handler
+            nextBtn.addEventListener('click', function() {
+                if (currentSlide < totalSlides - 1) {
+                    currentSlide++;
+                    showSlide(currentSlide);
                 }
             });
 
-            // ----------------------------------
-            // --- Loading Screen Logic ---
-            // ----------------------------------
-            const loadingScreen = document.getElementById('loading-screen');
-            const aboutSection = document.getElementById('about-section');
-            const mainContent = document.getElementById('main-content');
-            const loadingBar = document.getElementById('loading-bar');
-            const robotContainer = document.getElementById('robot-container');
-
-            let progress = 0;
-            const loadingInterval = setInterval(() => {
-                progress += 1; // Adjust increment for loading speed
-                loadingBar.style.width = progress + '%';
-                robotContainer.style.transform = `translateX(calc(${progress}% - 40px))`; // Move robot along the bar
-
-                if (progress >= 100) {
-                    clearInterval(loadingInterval);
-                    loadingScreen.style.display = 'none'; // Hide loading screen
-                    aboutSection.style.display = 'block';  // Show about section
+            // Previous button click handler
+            prevBtn.addEventListener('click', function() {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    showSlide(currentSlide);
                 }
-            }, 50); // Adjust interval for loading speed
+            });
 
-            // ----------------------------------
-            // --- "Get Started" Button Logic ---
-            // ----------------------------------
-            const getStartedButton = document.getElementById('get-started-button');
-            if (getStartedButton) { // Check if button exists to prevent errors if about section is removed
-                getStartedButton.addEventListener('click', () => {
-                    aboutSection.style.display = 'none';     // Hide about section
-                    mainContent.style.display = 'block';    // Show main content
-                });
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+                    e.preventDefault(); // Prevent space bar scrolling
+                    if (!nextBtn.disabled) { // Check if button is enabled
+                       if (currentSlide < totalSlides - 1) {
+                            currentSlide++;
+                            showSlide(currentSlide);
+                        }
+                    }
+                } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                    e.preventDefault();
+                     if (!prevBtn.disabled) { // Check if button is enabled
+                        if (currentSlide > 0) {
+                            currentSlide--;
+                            showSlide(currentSlide);
+                        }
+                    }
+                }
+            });
+
+            // Basic Swipe Detection (Optional - for touch devices)
+            let touchstartX = 0;
+            let touchendX = 0;
+            const presentationContainer = document.querySelector('.presentation-container');
+
+            function handleGesture() {
+                if (touchendX < touchstartX - 50) { // Swiped Left
+                    if (!nextBtn.disabled) {
+                         if (currentSlide < totalSlides - 1) {
+                            currentSlide++;
+                            showSlide(currentSlide);
+                        }
+                    }
+                }
+                if (touchendX > touchstartX + 50) { // Swiped Right
+                     if (!prevBtn.disabled) {
+                        if (currentSlide > 0) {
+                            currentSlide--;
+                            showSlide(currentSlide);
+                        }
+                    }
+                }
             }
 
+            presentationContainer.addEventListener('touchstart', e => {
+                touchstartX = e.changedTouches[0].screenX;
+            }, { passive: true });
 
-        })();
+            presentationContainer.addEventListener('touchend', e => {
+                touchendX = e.changedTouches[0].screenX;
+                handleGesture();
+            }, { passive: true });
+
+        });
     </script>
 </body>
 </html>
